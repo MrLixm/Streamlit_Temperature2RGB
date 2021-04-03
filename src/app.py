@@ -5,7 +5,7 @@ import Temperature2RGB as api
 #  ---------------------------------------------------------------------------
 # Constants
 
-app_title = "Kelvin Temperatures conversion to RGB Colorspaces"
+app_title = "Black-body Temperatures (Kelvin) to RGB Colorspaces conversion"
 
 colorspace_suggestions = [
     "sRGB",
@@ -16,7 +16,7 @@ colorspace_suggestions = [
 ]
 
 illuminants_suggestions = [
-    "Colorspace one",  # has to be at index 0 (=None)
+    "Colorspace's one",  # has to be at index 0 (=None)
     'D50',
     'D55',
     'D60',
