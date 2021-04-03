@@ -1,4 +1,4 @@
-
+import numpy
 import streamlit
 
 import constants
@@ -31,6 +31,17 @@ def ui():
         options=constants.COLORSPACES_NAMES,
         index=0
     )
+
+    user_tint = streamlit.sidebar.slider(
+        label="Tint",
+        min_value=-100.0,
+        max_value=100.0,
+        value=0.0,
+        step=0.01,
+        help="Skew the result along the iso-temperature lines. "
+             "Basicaly add Green(+)/Magenta(-)"
+    )
+    user_tint = user_tint / 1000 / 2
 
     # Advanced Options
     with streamlit.sidebar.beta_expander(label="Advanced Options"):
@@ -65,11 +76,38 @@ def ui():
     rgb_result = core.cct_to_rgb_colorspace_planckian(
         user_temperature,
         user_colorspace,
+        tint=user_tint,
         illuminant=user_illuminant,
         normalize=user_normalize
     )
     display_object = core.utils.Numpy2String(rgb_result,
                                              user_ndecimals)
+
+    # Calculate the image preview
+    if user_normalize:
+        if user_colorspace == "sRGB":
+            rgb_preview = rgb_result
+        else:
+            rgb_preview = core.cct_to_rgb_colorspace_planckian(
+                user_temperature,
+                "sRGB",
+                tint=user_tint,
+                illuminant=user_illuminant,
+                normalize=True
+            )
+    else:
+        rgb_preview = core.cct_to_rgb_colorspace_planckian(
+            user_temperature,
+            "sRGB",
+            tint=user_tint,
+            illuminant=user_illuminant,
+            normalize=True
+        )
+
+    # apply the 2.2 power function as transfer function and convert to 8bit
+    rgb_preview = (rgb_preview ** 2.2 * 255).astype(numpy.uint8)
+    image_temp_preview = numpy.full(
+        (100, 2048, 3), rgb_preview, dtype=numpy.uint8)
 
     # -------------------------------------------------------------------------
     # Displaying Results:
@@ -77,6 +115,12 @@ def ui():
     streamlit.header(
         f":thermometer: Results for {user_temperature}K and "
         f"{user_colorspace} primaries ")
+
+    streamlit.image(
+        image=image_temp_preview,
+        caption="sRGB preview with 2.2 power function",
+        clamp=True
+    )
 
     streamlit.code(display_object.linebreak, language="text")
 

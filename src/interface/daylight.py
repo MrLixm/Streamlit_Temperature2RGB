@@ -1,3 +1,4 @@
+import numpy
 import streamlit
 
 import constants
@@ -14,7 +15,8 @@ def ui():
         min_value=4000,
         max_value=25000,
         value=6500,
-        step=10
+        step=10,
+        help="CCT (Correlated Color Temperature)"
     )
 
     user_temperature = streamlit.sidebar.slider(
@@ -22,7 +24,9 @@ def ui():
         min_value=4000,
         max_value=25000,
         value=user_temperature,
-        step=10
+        step=10,
+        help="CCT (Correlated Color Temperature)"
+
     )
 
     user_colorspace = streamlit.sidebar.selectbox(
@@ -65,12 +69,42 @@ def ui():
     display_object = core.utils.Numpy2String(rgb_result,
                                              user_ndecimals)
 
+    # Calculate the image preview
+    if user_normalize:
+        if user_colorspace == "sRGB":
+            rgb_preview = rgb_result
+        else:
+            rgb_preview = core.cct_to_rgb_colorspace_daylight(
+                user_temperature,
+                "sRGB",
+                illuminant=user_illuminant,
+                normalize=True
+            )
+    else:
+        rgb_preview = core.cct_to_rgb_colorspace_daylight(
+            user_temperature,
+            "sRGB",
+            illuminant=user_illuminant,
+            normalize=True
+        )
+
+    # apply the 2.2 power function as transfer function and convert to 8bit
+    rgb_preview = (rgb_preview ** 2.2 * 255).astype(numpy.uint8)
+    image_temp_preview = numpy.full(
+        (100, 2048, 3), rgb_preview, dtype=numpy.uint8)
+
     # -------------------------------------------------------------------------
     # Displaying Results:
 
     streamlit.header(
         f":thermometer: Results for {user_temperature}K and "
         f"{user_colorspace} primaries ")
+
+    streamlit.image(
+        image=image_temp_preview,
+        caption="sRGB preview with 2.2 power function",
+        clamp=True
+    )
 
     streamlit.code(display_object.linebreak, language="text")
 

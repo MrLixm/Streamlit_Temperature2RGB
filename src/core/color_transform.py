@@ -54,11 +54,13 @@ def XYZ_to_colorspace(XYZ_values,
 def cct_to_rgb_colorspace_planckian(
         temperature,
         colorspace,
+        tint=0.0,
         illuminant=None,
         normalize=True):
     """
 
     Args:
+        tint:
         temperature(int): Correlated Colour Temperature in Kelvin
         colorspace(str): ex: "sRGB"
         illuminant(:obj:`str`, optional):
@@ -69,8 +71,10 @@ def cct_to_rgb_colorspace_planckian(
     Returns:
         ndarray: RGB values with the given colorpsace primaries.
     """
-
-    XYZ = colour.sd_to_XYZ(colour.sd_blackbody(temperature), k=683)
+    uv = colour.CCT_to_uv((temperature, tint))
+    xy = colour.UCS_uv_to_xy(uv)
+    XYZ = colour.xy_to_XYZ(xy)
+    # XYZ = colour.sd_to_XYZ(colour.sd_blackbody(temperature), k=683)
     rgb = XYZ_to_colorspace(XYZ_values=XYZ,
                             colorspace_name=colorspace,
                             illuminant=illuminant,
