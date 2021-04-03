@@ -97,11 +97,13 @@ display_object = api.resultFormatting.Numpy2String(rgb_result, user_ndecimals)
 # ---------------------------------------------------------------------------
 # Displaying Results:
 
-streamlit.header(f":thermometer: Results for {user_temperature}K")
+streamlit.header(
+    f":thermometer: Results for {user_temperature}K and "
+    f"{user_colorspace} primaries ")
 streamlit.code(display_object.linebreak)
-streamlit.subheader("_Single line with alpha (float4)_")
+streamlit.text("Single line with alpha (float4):")
 streamlit.code(display_object.singleline)
-streamlit.subheader("_Nuke node_")
+streamlit.text("Nuke node:")
 streamlit.code(
     display_object.nuke(
         node_name=f"Temperature_{user_temperature}K_{user_colorspace}")

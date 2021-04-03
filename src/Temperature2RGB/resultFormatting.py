@@ -35,15 +35,15 @@ class Numpy2String:
 
         """
         out_str = f"""
-        Constant {{
-         inputs 0
-         channels rgb
-         color {{{self.r} {self.g} {self.b} 1}}
-         color_panelDropped true
-         name  {node_name}
-         selected true
-         xpos 0
-         ypos 0
-        }}
+Constant {{
+ inputs 0
+ channels rgb
+ color {{{self.r} {self.g} {self.b} 1}}
+ color_panelDropped true
+ name  {node_name}
+ selected true
+ xpos 0
+ ypos 0
+}}
         """
         return out_str
