@@ -10,6 +10,8 @@ Require colour-science >= 0.3.16
 import colour
 import numpy
 
+colour.utilities.filter_warnings(colour_usage_warnings=True)
+
 
 def temperature_to_RGB(temperature, colorspace, illuminants=None,
                        cctf_encoding=False, clip=True):
