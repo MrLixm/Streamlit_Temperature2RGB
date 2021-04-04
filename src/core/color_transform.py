@@ -16,10 +16,12 @@ colour.utilities.filter_warnings(colour_usage_warnings=True)
 def XYZ_to_colorspace(XYZ_values,
                       colorspace_name,
                       illuminant=None,
-                      normalize=True):
+                      normalize=True,
+                      CAT="Bradford"):
     """
 
     Args:
+        CAT(str): Chromatic Adaptation transform
         XYZ_values(ndarray):
         colorspace_name(str): ex: "sRGB"
         illuminant(:obj:`str`, optional):
@@ -43,6 +45,7 @@ def XYZ_to_colorspace(XYZ_values,
         source_illuminant,
         csm.whitepoint,
         csm.matrix_XYZ_to_RGB,
+        chromatic_adaptation_transform=CAT
     )
 
     if normalize:
@@ -56,11 +59,14 @@ def cct_to_rgb_colorspace_planckian(
         colorspace,
         tint=0.0,
         illuminant=None,
-        normalize=True):
+        normalize=True,
+        CAT = "Bradford",
+):
     """
 
     Args:
-        tint:
+        CAT(str): Chromatic Adaptation transform
+        tint(float):
         temperature(int): Correlated Colour Temperature in Kelvin
         colorspace(str): ex: "sRGB"
         illuminant(:obj:`str`, optional):
@@ -78,7 +84,8 @@ def cct_to_rgb_colorspace_planckian(
     rgb = XYZ_to_colorspace(XYZ_values=XYZ,
                             colorspace_name=colorspace,
                             illuminant=illuminant,
-                            normalize=normalize)
+                            normalize=normalize,
+                            CAT=CAT)
     return rgb
 
 
@@ -88,10 +95,13 @@ def cct_range_to_rgb_colorspace_planckian(
         increment,
         colorspace,
         illuminant=None,
-        normalize=True):
+        normalize=True,
+        CAT="Bradford",
+):
     """ Print the RGB values for the temparature in the given range.
 
     Args:
+        CAT(str): Chromatic Adaptation transform
         illuminant(:obj:`str`, optional):
             Colorspace whitepoint if None else this is a CIE 1931 2 Degree
             Standard Observer illuminant. ex: 'D60'
@@ -110,7 +120,8 @@ def cct_range_to_rgb_colorspace_planckian(
             temperature,
             colorspace,
             illuminant=illuminant,
-            normalize=normalize)
+            normalize=normalize,
+            CAT=CAT)
         output_result.append((temperature, rgb_result))
 
     return output_result
@@ -120,10 +131,13 @@ def cct_to_rgb_colorspace_daylight(
         temperature,
         colorspace,
         illuminant=None,
-        normalize=True):
+        normalize=True,
+        CAT="Bradford",
+):
     """
 
     Args:
+        CAT(str): Chromatic Adaptation transform
         temperature(int): Correlated Colour Temperature in Kelvin
         colorspace(str): ex: "sRGB"
         illuminant(:obj:`str`, optional):
@@ -142,7 +156,8 @@ def cct_to_rgb_colorspace_daylight(
     rgb = XYZ_to_colorspace(XYZ_values=XYZ,
                             colorspace_name=colorspace,
                             illuminant=illuminant,
-                            normalize=normalize)
+                            normalize=normalize,
+                            CAT=CAT)
 
     return rgb
 

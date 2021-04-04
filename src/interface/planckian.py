@@ -34,14 +34,14 @@ def ui():
 
     user_tint = streamlit.sidebar.slider(
         label="Tint",
-        min_value=-100.0,
-        max_value=100.0,
+        min_value=-150.0,
+        max_value=150.0,
         value=0.0,
         step=0.01,
         help="Skew the result along the iso-temperature lines. "
              "Basicaly add Green(+)/Magenta(-)"
     )
-    user_tint = user_tint / 1000 / 2
+    user_tint = user_tint / 3000
 
     # Advanced Options
     with streamlit.sidebar.beta_expander(label="Advanced Options"):
@@ -63,6 +63,12 @@ def ui():
             value=True,
             help="Normalize values into the 0-1 range."
         )
+        user_CAT = streamlit.selectbox(
+            label='Chromatic Adaptation Transform',
+            options=constants.CAT_NAMES,
+            index=0,
+            help="CAT, default is Bradford."
+        )
 
     # Processing:
     if user_illuminant == constants.ILLUMINANTS_NAMES[0]:
@@ -78,7 +84,8 @@ def ui():
         user_colorspace,
         tint=user_tint,
         illuminant=user_illuminant,
-        normalize=user_normalize
+        normalize=user_normalize,
+        CAT=user_CAT,
     )
     display_object = core.utils.Numpy2String(rgb_result,
                                              user_ndecimals)
@@ -93,7 +100,8 @@ def ui():
                 "sRGB",
                 tint=user_tint,
                 illuminant=user_illuminant,
-                normalize=True
+                normalize=True,
+                CAT=user_CAT,
             )
     else:
         rgb_preview = core.cct_to_rgb_colorspace_planckian(
@@ -101,7 +109,8 @@ def ui():
             "sRGB",
             tint=user_tint,
             illuminant=user_illuminant,
-            normalize=True
+            normalize=True,
+            CAT=user_CAT,
         )
 
     # apply the 2.2 power function as transfer function and convert to 8bit

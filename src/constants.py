@@ -15,3 +15,11 @@ ILLUMINANTS_NAMES = [
     'D75',
     'E',
 ]
+
+CAT_NAMES = [
+    "Bradford",
+    "CAT02",
+    "Von Kries",
+    "XYZ Scaling",
+    "Bianco 2010"
+]

@@ -55,6 +55,12 @@ def ui():
             value=True,
             help="Normalize values into the 0-1 range."
         )
+        user_CAT = streamlit.selectbox(
+            label='Chromatic Adaptation Transform',
+            options=constants.CAT_NAMES,
+            index=0,
+            help="CAT, default is Bradford."
+        )
 
     # Processing:
     if user_illuminant == constants.ILLUMINANTS_NAMES[0]:
@@ -64,7 +70,8 @@ def ui():
         user_temperature,
         user_colorspace,
         illuminant=user_illuminant,
-        normalize=user_normalize
+        normalize=user_normalize,
+        CAT=user_CAT,
     )
     display_object = core.utils.Numpy2String(rgb_result,
                                              user_ndecimals)
@@ -78,17 +85,19 @@ def ui():
                 user_temperature,
                 "sRGB",
                 illuminant=user_illuminant,
-                normalize=True
+                normalize=True,
+                CAT=user_CAT
             )
     else:
         rgb_preview = core.cct_to_rgb_colorspace_daylight(
             user_temperature,
             "sRGB",
             illuminant=user_illuminant,
-            normalize=True
+            normalize=True,
+            CAT=user_CAT,
         )
 
-    # apply the 2.2 power function as transfer function and convert to 8bit
+    # # apply the 2.2 power function as transfer function and convert to 8bit
     rgb_preview = (rgb_preview ** 2.2 * 255).astype(numpy.uint8)
     image_temp_preview = numpy.full(
         (100, 2048, 3), rgb_preview, dtype=numpy.uint8)
