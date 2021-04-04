@@ -1,6 +1,9 @@
 
 
 class Numpy2String:
+    """
+    Convert a numpy array to a formatted string.
+    """
     def __init__(self, numpy_ndarray, ndecimals=3):
 
         self.value = numpy_ndarray
@@ -30,9 +33,7 @@ class Numpy2String:
 
     def nuke(self, node_name):
         """
-
-        Returns:
-
+        Return a Nuke Constant node
         """
         out_str = f"""
 Constant {{
