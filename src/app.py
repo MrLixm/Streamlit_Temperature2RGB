@@ -3,6 +3,8 @@ import streamlit
 
 import interface
 
+__version__ = "3.0"
+__date__ = "05-04-2021"
 
 streamlit.set_page_config(
     page_title="Temperature2RGB",
@@ -21,8 +23,8 @@ user_result_mode = streamlit.sidebar.selectbox(
         "Daylight"
     ],
     index=0,
-    help="Planckian: pure incandescent black body | "
-         "Daylight: same but viewed under daylight condition"
+    help="Planckian: pure incandescent black body \n"
+         "\nDaylight: same but viewed under daylight condition"
 )
 
 # Build rest of the interface
@@ -45,6 +47,10 @@ streamlit.markdown(
     "_Contact: monsieurlixm@gmail.com_"
 )
 
+"""
+---
+"""
+
 streamlit.subheader(":book: Learning")
 
 
@@ -61,7 +67,6 @@ a pure black-body radiator (probably never) and further more ,
 being affected by viewing conditions (ex: the sun by the atmosphere).
 Using the Daylight Locus or the tint parameter on the Planckian locus might
 help you achieve the right colour for your source. 
-
 """)
 
 table_data = [
@@ -73,11 +78,20 @@ table_data = [
     ("3000K", "Warm white compact fluorescent and LED lamps  "),
     ("5000K", ("Horizon daylight, cool white / daylight compact fluorescent "
                "lamps (CFL)")),
+    ("5900K", "Sunlight above the atmosphere (Space)"),
     ("6500K", "Daylight, overcast"),
     ("6500-9500K", "LCD or CRT screen "),
+    ("10637K (Planckian)", "Bluest sky in the world.(Brazil)"),
     ("15,000-27,000K", "Clear blue poleward sky "),
 ]
 dataframe = pandas.DataFrame(table_data,
                              columns=("Temperature", "Source"))
 streamlit.table(dataframe)
-streamlit.write("Source: https://en.wikipedia.org/wiki/Color_temperature")
+streamlit.write("Sources: \n"
+                "- https://en.wikipedia.org/wiki/Color_temperature\n"
+                "- http://web.archive.org/web/20080517201411"
+                "/http://www.npl.co.uk/blueskies/")
+"""
+---
+"""
+streamlit.markdown(f"_Version `{__version__}` , last updated: `{__date__}`_")

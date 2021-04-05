@@ -10,7 +10,16 @@ def ui():
     streamlit.title(
         "Daylight Black-body Temperature to RGB Colorspaces conversion")
 
-    user_temperature = streamlit.sidebar.number_input(
+    user_slider = streamlit.sidebar.checkbox(
+        label="Use Slider",
+        value=False,
+    )
+    if user_slider:
+        input_widget = streamlit.sidebar.slider
+    else:
+        input_widget = streamlit.sidebar.number_input
+
+    user_temperature = input_widget(
         label="Source Temperature in Kelvin (K)",
         min_value=4000,
         max_value=25000,
@@ -19,19 +28,9 @@ def ui():
         help="CCT (Correlated Color Temperature)"
     )
 
-    user_temperature = streamlit.sidebar.slider(
-        label="Source Temperature in Kelvin (K)",
-        min_value=4000,
-        max_value=25000,
-        value=user_temperature,
-        step=10,
-        help="CCT (Correlated Color Temperature)"
-
-    )
-
     user_colorspace = streamlit.sidebar.selectbox(
         label='Target Colorspace primaries',
-        options=constants.COLORSPACES_NAMES,
+        options=list(constants.COLORSPACES_NAMES.keys()),
         index=0
     )
 
@@ -62,42 +61,33 @@ def ui():
             help="CAT, default is Bradford."
         )
 
-    # Processing:
+    # User input operations:
     if user_illuminant == constants.ILLUMINANTS_NAMES[0]:
         user_illuminant = None
 
-    rgb_result = core.cct_to_rgb_colorspace_daylight(
-        user_temperature,
-        user_colorspace,
-        illuminant=user_illuminant,
-        normalize=user_normalize,
-        CAT=user_CAT,
-    )
-    display_object = core.utils.Numpy2String(rgb_result,
-                                             user_ndecimals)
+    user_colorspace = constants.COLORSPACES_NAMES[user_colorspace]
 
-    # Calculate the image preview
-    if user_normalize:
-        if user_colorspace == "sRGB":
-            rgb_preview = rgb_result
-        else:
-            rgb_preview = core.cct_to_rgb_colorspace_daylight(
-                user_temperature,
-                "sRGB",
-                illuminant=user_illuminant,
-                normalize=True,
-                CAT=user_CAT
-            )
-    else:
-        rgb_preview = core.cct_to_rgb_colorspace_daylight(
-            user_temperature,
-            "sRGB",
+    # Processing
+    temperature_obj = core.TemperatureObject(CCT=user_temperature).daylight
+
+    rgb_result = temperature_obj.rgb(
+            primaries=user_colorspace,
             illuminant=user_illuminant,
-            normalize=True,
-            CAT=user_CAT,
-        )
+            CAT=user_CAT
+    )
 
-    # # apply the 2.2 power function as transfer function and convert to 8bit
+    display_object = core.utils.RGBarray2String(
+        numpy_ndarray=rgb_result.value(normalized=user_normalize),
+        ndecimals=user_ndecimals
+    )
+
+    rgb_preview = temperature_obj.rgb(
+        "sRGB",
+        illuminant=user_illuminant,
+        CAT=user_CAT
+        ).value(normalized=True)
+
+    # apply the 2.2 power function as transfer function and convert to 8bit
     rgb_preview = (rgb_preview ** 2.2 * 255).astype(numpy.uint8)
     image_temp_preview = numpy.full(
         (100, 2048, 3), rgb_preview, dtype=numpy.uint8)
@@ -122,8 +112,15 @@ def ui():
 
     streamlit.text("Nuke node:")
     streamlit.code(
-        display_object.nuke(
-            node_name=f"Temperature_{user_temperature}K_{user_colorspace}"),
+        body=display_object.nuke(
+            node_name=f"Daylight_{user_temperature}K_{user_colorspace}"),
+        language="text"
+    )
+
+    streamlit.text("CIE xy chromaticity coordinates:")
+    streamlit.code(
+        body=core.utils.CIExy2String(temperature_obj.xy,
+                                     ndecimals=user_ndecimals).tuple,
         language="text"
     )
 

@@ -1,3 +1,4 @@
+import colour
 import numpy
 import streamlit
 
@@ -10,7 +11,16 @@ def ui():
     streamlit.title(
         "Planckian Black-body Temperature to RGB Colorspaces conversion")
 
-    user_temperature = streamlit.sidebar.number_input(
+    user_slider = streamlit.sidebar.checkbox(
+        label="Use Sliders",
+        value=False,
+    )
+    if user_slider:
+        input_widget = streamlit.sidebar.slider
+    else:
+        input_widget = streamlit.sidebar.number_input
+
+    user_temperature = input_widget(
         label="Source Temperature in Kelvin (K)",
         min_value=1000,
         max_value=25000,
@@ -18,30 +28,22 @@ def ui():
         step=10
     )
 
-    user_temperature = streamlit.sidebar.slider(
-        label="Source Temperature in Kelvin (K)",
-        min_value=1000,
-        max_value=25000,
-        value=user_temperature,
-        step=10
-    )
-
     user_colorspace = streamlit.sidebar.selectbox(
         label='Target Colorspace primaries',
-        options=constants.COLORSPACES_NAMES,
+        options=list(constants.COLORSPACES_NAMES.keys()),
         index=0
     )
 
-    user_tint = streamlit.sidebar.slider(
+    user_tint = input_widget(
         label="Tint",
         min_value=-150.0,
         max_value=150.0,
         value=0.0,
         step=0.01,
-        help="Skew the result along the iso-temperature lines. "
-             "Basicaly add Green(+)/Magenta(-)"
+        help="How imperfect is this blackbody by biasing the colour along the"
+             " ISO temperature lines \n"
+             "Basicaly + add Green; - add Magenta"
     )
-    user_tint = user_tint / 3000
 
     # Advanced Options
     with streamlit.sidebar.beta_expander(label="Advanced Options"):
@@ -70,51 +72,43 @@ def ui():
             help="CAT, default is Bradford."
         )
 
-    # Processing:
+    # User input operations:
+
+    user_tint = user_tint / 3000
+    user_colorspace = constants.COLORSPACES_NAMES[user_colorspace]
+
     if user_illuminant == constants.ILLUMINANTS_NAMES[0]:
         user_illuminant = None
 
     if user_temperature < 1900 and user_colorspace == "sRGB":
         streamlit.warning(
-            "The lowest representable color temperature by the sRGB "
+            "The lowest representable color temperature_object by the sRGB "
             "colorspace being 1900K the current result is clamped.")
 
-    rgb_result = core.cct_to_rgb_colorspace_planckian(
-        user_temperature,
-        user_colorspace,
-        tint=user_tint,
-        illuminant=user_illuminant,
-        normalize=user_normalize,
-        CAT=user_CAT,
-    )
-    display_object = core.utils.Numpy2String(rgb_result,
-                                             user_ndecimals)
+    # Processing
+    temperature_obj = core.TemperatureObject(CCT=user_temperature,
+                                             tint=user_tint).planckian
 
-    # Calculate the image preview
-    if user_normalize:
-        if user_colorspace == "sRGB":
-            rgb_preview = rgb_result
-        else:
-            rgb_preview = core.cct_to_rgb_colorspace_planckian(
-                user_temperature,
-                "sRGB",
-                tint=user_tint,
-                illuminant=user_illuminant,
-                normalize=True,
-                CAT=user_CAT,
-            )
-    else:
-        rgb_preview = core.cct_to_rgb_colorspace_planckian(
-            user_temperature,
-            "sRGB",
-            tint=user_tint,
+    rgb_result = temperature_obj.rgb(
+            primaries=user_colorspace,
             illuminant=user_illuminant,
-            normalize=True,
-            CAT=user_CAT,
-        )
+            CAT=user_CAT
+    )
+
+    display_object = core.utils.RGBarray2String(
+        numpy_ndarray=rgb_result.value(normalized=user_normalize),
+        ndecimals=user_ndecimals
+    )
+
+    rgb_preview = temperature_obj.rgb(
+        "sRGB",
+        illuminant=user_illuminant,
+        CAT=user_CAT
+        ).value(normalized=True)
 
     # apply the 2.2 power function as transfer function and convert to 8bit
-    rgb_preview = (rgb_preview ** 2.2 * 255).astype(numpy.uint8)
+    rgb_preview = (rgb_preview ** (1/2.2) * 255).astype(numpy.uint8)
+    print(rgb_preview)
     image_temp_preview = numpy.full(
         (100, 2048, 3), rgb_preview, dtype=numpy.uint8)
 
@@ -138,8 +132,16 @@ def ui():
 
     streamlit.text("Nuke node:")
     streamlit.code(
-        display_object.nuke(
-            node_name=f"Temperature_{user_temperature}K_{user_colorspace}"),
+        body=display_object.nuke(
+            node_name=f"Planckian_{user_temperature}K_{user_colorspace}"
+                      f"_{user_tint}"),
+        language="text"
+    )
+
+    streamlit.text("CIE xy chromaticity coordinates:")
+    streamlit.code(
+        body=core.utils.CIExy2String(temperature_obj.xy,
+                                     ndecimals=user_ndecimals).tuple,
         language="text"
     )
 

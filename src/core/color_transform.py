@@ -13,11 +13,12 @@ import numpy
 colour.utilities.filter_warnings(colour_usage_warnings=True)
 
 
-def XYZ_to_colorspace(XYZ_values,
-                      colorspace_name,
-                      illuminant=None,
-                      normalize=True,
-                      CAT="Bradford"):
+def XYZ_to_colorspace(
+    XYZ_values,
+    colorspace_name,
+    illuminant=None,
+    CAT="Bradford"
+):
     """
 
     Args:
@@ -27,7 +28,6 @@ def XYZ_to_colorspace(XYZ_values,
         illuminant(:obj:`str`, optional):
             Colorspace whitepoint if None else this is a CIE 1931 2 Degree
             Standard Observer illuminant. ex: 'D60'
-        normalize(bool): normalize values to the 0-1 range
 
     Returns:
         ndarray: RGB values with the given colorpsace primaries.
@@ -40,7 +40,7 @@ def XYZ_to_colorspace(XYZ_values,
     else:
         source_illuminant = csm.whitepoint
 
-    rgb = colour.XYZ_to_RGB(
+    return colour.XYZ_to_RGB(
         XYZ_values,
         source_illuminant,
         csm.whitepoint,
@@ -48,116 +48,131 @@ def XYZ_to_colorspace(XYZ_values,
         chromatic_adaptation_transform=CAT
     )
 
-    if normalize:
-        rgb = colour.utilities.normalise_maximum(rgb, clip=True)
 
-    return rgb
-
-
-def cct_to_rgb_colorspace_planckian(
-        temperature,
-        colorspace,
-        tint=0.0,
-        illuminant=None,
-        normalize=True,
-        CAT = "Bradford",
-):
+class Array:
     """
-
-    Args:
-        CAT(str): Chromatic Adaptation transform
-        tint(float):
-        temperature(int): Correlated Colour Temperature in Kelvin
-        colorspace(str): ex: "sRGB"
-        illuminant(:obj:`str`, optional):
-            Colorspace whitepoint if None else this is a CIE 1931 2 Degree
-            Standard Observer illuminant. ex: 'D60'
-        normalize(bool): normalize values to the 0-1 range
-
-    Returns:
-        ndarray: RGB values with the given colorpsace primaries.
+    Hold a numpy ndarray
     """
-    uv = colour.CCT_to_uv((temperature, tint))
-    xy = colour.UCS_uv_to_xy(uv)
-    XYZ = colour.xy_to_XYZ(xy)
-    # XYZ = colour.sd_to_XYZ(colour.sd_blackbody(temperature), k=683)
-    rgb = XYZ_to_colorspace(XYZ_values=XYZ,
-                            colorspace_name=colorspace,
-                            illuminant=illuminant,
-                            normalize=normalize,
-                            CAT=CAT)
-    return rgb
+    def __init__(self, array_value):
+        """
+        Args:
+            array_value(numpy.ndarray):
+        """
+        self._value = array_value
+
+    @property
+    def normalized(self):
+        return colour.utilities.normalise_maximum(self._value, clip=True)
+
+    def value(self, normalized):
+        return self.normalized if normalized else self._value
 
 
-def cct_range_to_rgb_colorspace_planckian(
-        min_temp,
-        max_temp,
-        increment,
-        colorspace,
-        illuminant=None,
-        normalize=True,
-        CAT="Bradford",
-):
-    """ Print the RGB values for the temparature in the given range.
+class Planckian:
+    def __init__(self, temperature):
+        """
 
-    Args:
-        CAT(str): Chromatic Adaptation transform
-        illuminant(:obj:`str`, optional):
-            Colorspace whitepoint if None else this is a CIE 1931 2 Degree
-            Standard Observer illuminant. ex: 'D60'
-        normalize(bool): normalize values to the 0-1 range
-        min_temp(int): Kelvin temparature: beginning of range
-        max_temp(int): Kelvin temparature: end of range
-        increment(int): step of range
-        colorspace(str): ex: "sRGB"
+        Args:
+            temperature(TemperatureObject):
+        """
+        self.temperature_object = temperature
+        self._uv = None
+        self._xy = None
+        self._XYZ = None
 
-    Returns:
-        list of tuple: [( temperature(int), rgb_values(ndarray) ), ...]
-    """
-    output_result = []
-    for temperature in range(min_temp, max_temp, increment):
-        rgb_result = cct_to_rgb_colorspace_planckian(
-            temperature,
-            colorspace,
-            illuminant=illuminant,
-            normalize=normalize,
-            CAT=CAT)
-        output_result.append((temperature, rgb_result))
+    @property
+    def uv(self):
+        """
+        Returns:
+            numpy.ndarray: CIE UCS uv coordinates
+        """
+        if self._uv:
+            return self._uv
+        else:
+            return colour.CCT_to_uv((self.temperature_object.CCT,
+                                     self.temperature_object.tint))
 
-    return output_result
+    @property
+    def xy(self):
+        """
+        Returns:
+            numpy.ndarray: CIE xy chromaticity coordinates
+        """
+        if self._xy:
+            return self._xy
+        else:
+            return colour.UCS_uv_to_xy(self.uv)
+
+    @property
+    def XYZ(self):
+        """
+        Returns:
+            numpy.ndarray: CIE XYZ tristimulus values
+        """
+        if self._XYZ:
+            return self._XYZ
+        else:
+            return colour.xy_to_XYZ(self.xy)
+
+    def rgb(self, primaries, illuminant, CAT):
+        """
+
+        Args:
+            primaries(str):
+            illuminant(str):
+            CAT(str):
+
+        Returns:
+            Array: Array object with RGB colorspace primaries
+        """
+        return Array(
+            XYZ_to_colorspace(
+                XYZ_values=self.XYZ,
+                colorspace_name=primaries,
+                illuminant=illuminant,
+                CAT=CAT
+            ))
 
 
-def cct_to_rgb_colorspace_daylight(
-        temperature,
-        colorspace,
-        illuminant=None,
-        normalize=True,
-        CAT="Bradford",
-):
-    """
+class Daylight(Planckian):
 
-    Args:
-        CAT(str): Chromatic Adaptation transform
-        temperature(int): Correlated Colour Temperature in Kelvin
-        colorspace(str): ex: "sRGB"
-        illuminant(:obj:`str`, optional):
-            Colorspace whitepoint if None else this is a CIE 1931 2 Degree
-            Standard Observer illuminant. ex: 'D60'
-        normalize(bool): normalize values to the 0-1 range
+    @property
+    def xy(self):
+        """
+        Returns:
+            numpy.ndarray: CIE xy chromaticity coordinates
+        """
+        if self._xy:
+            return self._xy
+        else:
+            # rescale because of changes in the Planck's constant
+            temperature = self.temperature_object.CCT * 1.4388 / 1.4380
+            return colour.temperature.CCT_to_xy_CIE_D(temperature)
 
-    Returns:
-        ndarray: RGB values with the given colorpsace primaries.
-    """
-    # rescale because of changes in the Planck's constant
-    temperature *= 1.4388 / 1.4380
 
-    xy_CIED = colour.temperature.CCT_to_xy_CIE_D(temperature)
-    XYZ = colour.xy_to_XYZ(xy_CIED)
-    rgb = XYZ_to_colorspace(XYZ_values=XYZ,
-                            colorspace_name=colorspace,
-                            illuminant=illuminant,
-                            normalize=normalize,
-                            CAT=CAT)
+class TemperatureObject:
+    def __init__(self,
+                 CCT,
+                 tint=0.0):
+        """
 
-    return rgb
+        Args:
+            tint(float): -0.05, 0.05 range
+            CCT(int): Correlated Colour Temperature in Kelvin
+
+        Returns:
+            ndarray: RGB values with the given colorpsace primaries.
+        """
+
+        self.CCT = CCT
+        self.tint = tint
+
+    @property
+    def planckian(self):
+        return Planckian(self)
+
+    @property
+    def daylight(self):
+        return Daylight(self)
+
 

@@ -1,8 +1,9 @@
 
 
-class Numpy2String:
+class RGBarray2String:
     """
     Convert a numpy array to a formatted string.
+    The numpy array represent a RGB value
     """
     def __init__(self, numpy_ndarray, ndecimals=3):
 
@@ -48,3 +49,25 @@ Constant {{
 }}
         """
         return out_str
+
+
+class CIExy2String:
+    """
+    Utility to display a numpy array to string.
+    The numpy array represent CIE xy chromaticity coordinates
+    """
+    def __init__(self, xy_array, ndecimals=3):
+        self.value = xy_array
+        self.ndecimals = ndecimals
+
+    @property
+    def x(self):
+        return round(float(self.value[0]), self.ndecimals)
+
+    @property
+    def y(self):
+        return round(float(self.value[1]), self.ndecimals)
+
+    @property
+    def tuple(self):
+        return f"({self.x}, {self.y})"
