@@ -74,6 +74,7 @@ def ui():
 
     # User input operations:
 
+    user_tint_interface = user_tint
     user_tint = user_tint / 3000
     user_colorspace = constants.COLORSPACES_NAMES[user_colorspace]
 
@@ -134,7 +135,7 @@ def ui():
     streamlit.code(
         body=display_object.nuke(
             node_name=f"Planckian_{user_temperature}K_{user_colorspace}"
-                      f"_{user_tint}"),
+                      f"_{user_tint_interface}"),
         language="text"
     )
 
