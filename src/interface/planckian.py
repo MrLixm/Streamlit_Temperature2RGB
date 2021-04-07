@@ -39,7 +39,7 @@ def ui():
         min_value=-150.0,
         max_value=150.0,
         value=0.0,
-        step=0.01,
+        step=1,
         help="How imperfect is this blackbody by biasing the colour along the"
              " ISO temperature lines \n"
              "Basicaly + add Green; - add Magenta"
