@@ -88,7 +88,7 @@ def ui():
         ).value(normalized=True)
 
     # apply the 2.2 power function as transfer function and convert to 8bit
-    rgb_preview = (rgb_preview ** 2.2 * 255).astype(numpy.uint8)
+    rgb_preview = (rgb_preview ** (1/2.2) * 255).astype(numpy.uint8)
     image_temp_preview = numpy.full(
         (100, 2048, 3), rgb_preview, dtype=numpy.uint8)
 

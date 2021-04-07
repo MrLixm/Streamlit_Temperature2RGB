@@ -35,7 +35,7 @@ def ui():
     )
 
     user_tint = input_widget(
-        label="Tint",
+        label="Tint [-150 - +150]",
         min_value=-150.0,
         max_value=150.0,
         value=0.0,
@@ -109,7 +109,6 @@ def ui():
 
     # apply the 2.2 power function as transfer function and convert to 8bit
     rgb_preview = (rgb_preview ** (1/2.2) * 255).astype(numpy.uint8)
-    print(rgb_preview)
     image_temp_preview = numpy.full(
         (100, 2048, 3), rgb_preview, dtype=numpy.uint8)
 
