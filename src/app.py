@@ -3,7 +3,7 @@ import streamlit
 
 import interface
 
-__version__ = "3.1"
+__version__ = "3.2"
 __date__ = "07-04-2021"
 
 streamlit.set_page_config(
