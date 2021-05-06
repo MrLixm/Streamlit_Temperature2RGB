@@ -16,5 +16,5 @@ Additional  settings:
 - Normalize values.
 - Chromatic Adaptation Transform.
 
-_Thanks to Thomas Masencal for the help, and Christophe Brejon for
+_Thanks to Thomas Mansencal for the help, and Christophe Brejon for
  investigating about the Daylight Locus._
