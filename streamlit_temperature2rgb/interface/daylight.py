@@ -33,7 +33,7 @@ def ui():
     )
 
     # Advanced Options
-    with streamlit.sidebar.beta_expander(label="Advanced Options"):
+    with streamlit.sidebar.expander(label="Advanced Options"):
         user_illuminant = streamlit.selectbox(
             label="Target Illuminant",
             options=constants.ILLUMINANTS_NAMES,
