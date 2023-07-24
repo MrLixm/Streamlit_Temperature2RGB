@@ -1,12 +1,10 @@
-
-
 class RGBarray2String:
     """
     Convert a numpy array to a formatted string.
     The numpy array represent a RGB value
     """
-    def __init__(self, numpy_ndarray, ndecimals=3):
 
+    def __init__(self, numpy_ndarray, ndecimals=3):
         self.value = numpy_ndarray
         self.ndecimals = ndecimals
 
@@ -24,9 +22,7 @@ class RGBarray2String:
 
     @property
     def linebreak(self):
-        return (f"R: {self.r} \n"
-                f"G: {self.g} \n"
-                f"B: {self.b} \n")
+        return f"R: {self.r} \n" f"G: {self.g} \n" f"B: {self.b} \n"
 
     @property
     def singleline(self):
@@ -56,6 +52,7 @@ class CIExy2String:
     Utility to display a numpy array to string.
     The numpy array represent CIE xy chromaticity coordinates
     """
+
     def __init__(self, xy_array, ndecimals=3):
         self.value = xy_array
         self.ndecimals = ndecimals

@@ -13,12 +13,7 @@ import numpy
 colour.utilities.filter_warnings(colour_usage_warnings=True)
 
 
-def XYZ_to_colorspace(
-    XYZ_values,
-    colorspace_name,
-    illuminant=None,
-    CAT="Bradford"
-):
+def XYZ_to_colorspace(XYZ_values, colorspace_name, illuminant=None, CAT="Bradford"):
     """
 
     Args:
@@ -36,7 +31,8 @@ def XYZ_to_colorspace(
     csm = colour.RGB_COLOURSPACES[colorspace_name]
     if illuminant:
         source_illuminant = colour.CCS_ILLUMINANTS[
-            'CIE 1931 2 Degree Standard Observer'][illuminant]
+            "CIE 1931 2 Degree Standard Observer"
+        ][illuminant]
     else:
         source_illuminant = csm.whitepoint
 
@@ -45,7 +41,7 @@ def XYZ_to_colorspace(
         source_illuminant,
         csm.whitepoint,
         csm.matrix_XYZ_to_RGB,
-        chromatic_adaptation_transform=CAT
+        chromatic_adaptation_transform=CAT,
     )
 
 
@@ -53,6 +49,7 @@ class Array:
     """
     Hold a numpy ndarray
     """
+
     def __init__(self, array_value):
         """
         Args:
@@ -89,8 +86,9 @@ class Planckian:
         if self._uv:
             return self._uv
         else:
-            return colour.CCT_to_uv((self.temperature_object.CCT,
-                                     self.temperature_object.tint))
+            return colour.CCT_to_uv(
+                (self.temperature_object.CCT, self.temperature_object.tint)
+            )
 
     @property
     def xy(self):
@@ -130,12 +128,12 @@ class Planckian:
                 XYZ_values=self.XYZ,
                 colorspace_name=primaries,
                 illuminant=illuminant,
-                CAT=CAT
-            ))
+                CAT=CAT,
+            )
+        )
 
 
 class Daylight(Planckian):
-
     @property
     def xy(self):
         """
@@ -151,9 +149,7 @@ class Daylight(Planckian):
 
 
 class TemperatureObject:
-    def __init__(self,
-                 CCT,
-                 tint=0.0):
+    def __init__(self, CCT, tint=0.0):
         """
 
         Args:
@@ -174,5 +170,3 @@ class TemperatureObject:
     @property
     def daylight(self):
         return Daylight(self)
-
-
