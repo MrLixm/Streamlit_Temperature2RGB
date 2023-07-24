@@ -1,4 +1,4 @@
-from ._utils import UifiedEnum
+from streamlit_temperature2rgb._utils import UifiedEnum
 
 
 class Colorspaces(UifiedEnum):

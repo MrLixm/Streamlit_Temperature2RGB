@@ -1,10 +1,17 @@
-import colour
 import streamlit
 import pandas
 
-import streamlit_temperature2rgb.core
-from streamlit_temperature2rgb import config
 from streamlit_temperature2rgb._utils import widgetify
+from streamlit_temperature2rgb.core import rgb_array_to_multi_line
+from streamlit_temperature2rgb.core import rgb_array_to_nuke
+from streamlit_temperature2rgb.core import rgb_array_to_single_line
+from streamlit_temperature2rgb.core import xy_array_to_tuple
+from . import config
+from ._sidebar import create_sidebar
+from ._controller import get_nuke_node_name
+from ._controller import get_preview_image
+from ._controller import get_rgb_array
+from ._controller import get_xy_array
 
 
 @widgetify
@@ -15,33 +22,6 @@ def widget_temperature_slider(key):
 @widgetify
 def widget_temperature_box(key):
     config.USER_TEMPERATURE = streamlit.session_state[key]
-
-
-@widgetify
-def widget_locus(key):
-    config.USER_DAYLIGHT_MODE = streamlit.session_state[key] == "Daylight"
-
-
-@widgetify
-def widget_illuminant(key):
-    value = streamlit.session_state[key]
-    config.USER_ILLUMINANT_NAME = config.USER_ILLUMINANT_NAME.from_label(value)
-
-
-@widgetify
-def widget_ndecimals(key):
-    config.USER_NDECIMALS = streamlit.session_state[key]
-
-
-@widgetify
-def widget_normalize(key):
-    config.USER_NORMALIZE = streamlit.session_state[key]
-
-
-@widgetify
-def widget_cat_name(key):
-    value = streamlit.session_state[key]
-    config.USER_CAT_NAME = config.USER_CAT_NAME.from_label(value)
 
 
 @widgetify
@@ -138,95 +118,37 @@ def body_display():
             "colorspace being 1900K, the result you are seeing is clamped."
         )
 
-    colorspace = config.USER_COLORSPACE_NAME.as_core()
-    colorspace: colour.RGB_Colourspace = colour.RGB_COLOURSPACES[colorspace]
-
-    whitepoint = config.USER_ILLUMINANT_NAME.as_core()
-    if whitepoint is None:
-        whitepoint = colorspace.whitepoint
-    else:
-        whitepoint = colour.CCS_ILLUMINANTS["CIE 1931 2 Degree Standard Observer"]
-        whitepoint = whitepoint[whitepoint]
-
-    tint = config.USER_TINT / 3000
-
-    if config.USER_DAYLIGHT_MODE:
-        conversion = streamlit_temperature2rgb.core.DaylightCCTConversion(
-            CCT=config.USER_TEMPERATURE,
-            colorspace=colorspace,
-            illuminant=whitepoint,
-            cat=config.USER_CAT_NAME.as_core(),
-        )
-    else:
-        conversion = streamlit_temperature2rgb.core.PlanckianCCTConversion(
-            CCT=config.USER_TEMPERATURE,
-            colorspace=colorspace,
-            illuminant=whitepoint,
-            cat=config.USER_CAT_NAME.as_core(),
-            tint=tint,
-        )
-
     column1, column2 = streamlit.columns(2)
-
-    # IMAGE PREVIEW
-
-    if config.USER_COLORSPACE_NAME == config.USER_COLORSPACE_NAME.sRGB:
-        conversion_preview = conversion
-    else:
-        conversion_preview = conversion.with_colorspace(colour.RGB_COLOURSPACES["sRGB"])
-
-    image_preview_array = conversion_preview.rgb
-    image_preview_array = colour.algebra.normalise_maximum(
-        image_preview_array, clip=True
-    )
-    image_preview_array = streamlit_temperature2rgb.core.rgb_array_to_image(
-        image_preview_array, width=500, height=400
-    )
 
     with column1:
         streamlit.image(
-            image=image_preview_array,
+            image=get_preview_image(400, 285),
             caption="sRGB preview with 2.2 power function",
             clamp=True,
         )
 
-    # R-G-B values display
-
-    result_rgb_array = conversion.rgb
-    if config.USER_NORMALIZE:
-        result_rgb_array = colour.algebra.normalise_maximum(result_rgb_array, clip=True)
-
     with column2:
         streamlit.code(
-            streamlit_temperature2rgb.core.rgb_array_to_multi_line(
-                result_rgb_array, config.USER_NDECIMALS
-            ),
+            rgb_array_to_multi_line(get_rgb_array(), config.USER_NDECIMALS),
             language="text",
         )
 
         streamlit.code(
-            streamlit_temperature2rgb.core.rgb_array_to_single_line(
-                result_rgb_array, config.USER_NDECIMALS
-            ),
+            rgb_array_to_single_line(get_rgb_array(), config.USER_NDECIMALS),
             language="text",
         )
 
         streamlit.code(
-            streamlit_temperature2rgb.core.xy_array_to_tuple(
-                conversion.xy, config.USER_NDECIMALS
-            ),
+            xy_array_to_tuple(get_xy_array(), config.USER_NDECIMALS),
             language="text",
         )
         streamlit.caption("⬆ CIE xy chromaticity coordinates")
 
-    if config.USER_DAYLIGHT_MODE:
-        nuke_node_name = f"Daylight_{config.USER_TEMPERATURE}K_{config.USER_COLORSPACE_NAME.as_label()}"
-    else:
-        nuke_node_name = f"Planckian_{config.USER_TEMPERATURE}K_{config.USER_COLORSPACE_NAME.as_label()}_{config.USER_TINT}"
-
     streamlit.code(
-        streamlit_temperature2rgb.core.rgb_array_to_nuke(
-            result_rgb_array, config.USER_NDECIMALS, node_name=nuke_node_name
+        rgb_array_to_nuke(
+            get_rgb_array(),
+            config.USER_NDECIMALS,
+            node_name=get_nuke_node_name(),
         ),
         language="text",
     )
@@ -290,59 +212,9 @@ def body_footer():
     streamlit.caption("Usage permitted for commercial purposes.")
 
 
-def sidebar():
-    streamlit.header("Settings".upper())
-
-    streamlit.selectbox(
-        label="Locus",
-        options=["Planckian", "Daylight"],
-        index=int(config.USER_DAYLIGHT_MODE),
-        help=(
-            "- Planckian: pure incandescent black body\n"
-            "- Daylight: same but viewed under daylight condition"
-        ),
-        key=str(widget_locus),
-        on_change=widget_locus,
-    )
-    options = config.USER_ILLUMINANT_NAME.labels()
-    streamlit.selectbox(
-        label="Target Illuminant",
-        options=options,
-        index=options.index(config.USER_ILLUMINANT_NAME.as_label()),
-        help="Illuminant from the CIE 1931 2 Degree Standard Observer",
-        key=str(widget_illuminant),
-        on_change=widget_illuminant,
-    )
-    streamlit.number_input(
-        label="Number of decimals",
-        min_value=1,
-        max_value=9,
-        value=3,
-        step=1,
-        key=str(widget_ndecimals),
-        on_change=widget_ndecimals,
-    )
-    streamlit.checkbox(
-        label="Normalize values",
-        value=True,
-        help="Remap values into the 0.0-1.0 range.",
-        key=str(widget_normalize),
-        on_change=widget_normalize,
-    )
-    options = config.USER_CAT_NAME.labels()
-    streamlit.selectbox(
-        label="Chromatic Adaptation Transform",
-        options=options,
-        index=options.index(config.USER_CAT_NAME.as_label()),
-        help="(C.A.T.) for whitepoint conversion.",
-        key=str(widget_cat_name),
-        on_change=widget_cat_name,
-    )
-
-
 def create_main_interface():
     with streamlit.sidebar:
-        sidebar()
+        create_sidebar()
     streamlit.title("Temperature to RGB color.".upper())
     body_header()
     body_display()
