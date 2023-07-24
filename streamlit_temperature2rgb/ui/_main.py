@@ -8,10 +8,7 @@ from streamlit_temperature2rgb.core import rgb_array_to_single_line
 from streamlit_temperature2rgb.core import xy_array_to_tuple
 from . import config
 from ._sidebar import create_sidebar
-from ._controller import get_nuke_node_name
-from ._controller import get_preview_image
-from ._controller import get_rgb_array
-from ._controller import get_xy_array
+from ._controller import ConversionResult
 
 
 @widgetify
@@ -111,7 +108,7 @@ def body_header():
             )
 
 
-def body_display():
+def body_display(result: ConversionResult):
     if (
         config.USER_TEMPERATURE < 1900
         and config.USER_COLORSPACE_NAME == config.USER_COLORSPACE_NAME.sRGB
@@ -125,33 +122,33 @@ def body_display():
 
     with column1:
         streamlit.image(
-            image=get_preview_image(400, 285),
+            image=result.get_preview_image(400, 285),
             caption="sRGB preview with 2.2 power function",
             clamp=True,
         )
 
     with column2:
         streamlit.code(
-            rgb_array_to_multi_line(get_rgb_array(), config.USER_NDECIMALS),
+            rgb_array_to_multi_line(result.get_rgb_array(), config.USER_NDECIMALS),
             language="text",
         )
 
         streamlit.code(
-            rgb_array_to_single_line(get_rgb_array(), config.USER_NDECIMALS),
+            rgb_array_to_single_line(result.get_rgb_array(), config.USER_NDECIMALS),
             language="text",
         )
 
         streamlit.code(
-            xy_array_to_tuple(get_xy_array(), config.USER_NDECIMALS),
+            xy_array_to_tuple(result.get_xy_array(), config.USER_NDECIMALS),
             language="text",
         )
         streamlit.caption("⬆ CIE xy chromaticity coordinates")
 
     streamlit.code(
         rgb_array_to_nuke(
-            get_rgb_array(),
+            result.get_rgb_array(),
             config.USER_NDECIMALS,
-            node_name=get_nuke_node_name(),
+            node_name=result.get_nuke_node_name(),
         ),
         language="text",
     )
@@ -220,5 +217,6 @@ def create_main_interface():
         create_sidebar()
     streamlit.title("Temperature to RGB color.".upper())
     body_header()
-    body_display()
+    result = ConversionResult.from_active_context()
+    body_display(result=result)
     body_footer()
