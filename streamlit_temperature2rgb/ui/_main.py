@@ -24,6 +24,7 @@ def widget_temperature_box(key):
 @widgetify
 def widget_colorspace_name(key):
     value = streamlit.session_state[key]
+    print("widget_colorspace_name", value)
     config.USER_COLORSPACE_NAME = config.USER_COLORSPACE_NAME.from_label(value)
 
 
@@ -43,6 +44,8 @@ def body_header():
         label="Target Colorspace Primaries",
         options=options,
         index=options.index(config.USER_COLORSPACE_NAME.as_label()),
+        key=str(widget_colorspace_name),
+        on_change=widget_colorspace_name,
     )
 
     value = config.USER_TEMPERATURE
