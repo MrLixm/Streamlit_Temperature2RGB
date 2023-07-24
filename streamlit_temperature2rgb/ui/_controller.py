@@ -32,8 +32,9 @@ class ConversionResult:
         if _whitepoint is None:
             _whitepoint = _colorspace.whitepoint
         else:
-            _whitepoint = colour.CCS_ILLUMINANTS["CIE 1931 2 Degree Standard Observer"]
-            _whitepoint = _whitepoint[_whitepoint]
+            _whitepoint = colour.CCS_ILLUMINANTS["CIE 1931 2 Degree Standard Observer"][
+                _whitepoint
+            ]
 
         _tint = tint / 3000
 
