@@ -1,7 +1,7 @@
 import streamlit
 import pandas
 
-import streamlit_temperature2rgb.interface
+import streamlit_temperature2rgb.ui
 
 
 def create_main_interface():
@@ -29,9 +29,9 @@ def create_main_interface():
     # Build rest of the interface
 
     if user_locus == "Planckian":
-        streamlit_temperature2rgb.interface.planckian.ui()
+        streamlit_temperature2rgb.ui.planckian.ui()
     elif user_locus == "Daylight":
-        streamlit_temperature2rgb.interface.daylight.ui()
+        streamlit_temperature2rgb.ui.daylight.ui()
 
     streamlit.subheader(":book: Learning")
 
