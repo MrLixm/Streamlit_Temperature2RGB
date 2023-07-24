@@ -162,6 +162,7 @@ def body_display(result: ConversionResult):
 
 
 def body_footer():
+    streamlit.markdown("---")
     streamlit.header(":book: Learning")
 
     streamlit.markdown(
