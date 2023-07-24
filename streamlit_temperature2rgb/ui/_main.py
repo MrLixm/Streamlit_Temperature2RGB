@@ -69,43 +69,46 @@ def body_header():
 
     with column2:
         streamlit.slider(
-            label="",
+            label="Temperature Slider",
             min_value=min_value,
             max_value=max_value,
             value=value,
             step=10.0,
             key=str(widget_temperature_slider),
             on_change=widget_temperature_slider,
+            label_visibility="hidden",
         )
 
-    if not config.USER_DAYLIGHT_MODE:
-        column1, column2 = streamlit.columns([0.25, 0.75])
+    column1, column2 = streamlit.columns([0.25, 0.75])
 
-        with column1:
-            streamlit.number_input(
-                label="Tint",
-                min_value=-150.0,
-                max_value=150.0,
-                value=config.USER_TINT,
-                step=1.0,
-                key=str(widget_tint_box),
-                on_change=widget_tint_box,
-            )
+    with column1:
+        streamlit.number_input(
+            label="Tint",
+            min_value=-150.0,
+            max_value=150.0,
+            value=config.USER_TINT,
+            step=1.0,
+            key=str(widget_tint_box),
+            on_change=widget_tint_box,
+            disabled=config.USER_DAYLIGHT_MODE,
+        )
 
-        with column2:
-            streamlit.slider(
-                label="",
-                min_value=-150.0,
-                max_value=150.0,
-                value=config.USER_TINT,
-                step=1.0,
-                help=(
-                    "How imperfect is this blackbody by biasing the colour along the "
-                    "ISO temperature lines where >0.0 add Green and <0.0 add Magenta"
-                ),
-                key=str(widget_tint_slider),
-                on_change=widget_tint_slider,
-            )
+    with column2:
+        streamlit.slider(
+            label="Tint Slider",
+            min_value=-150.0,
+            max_value=150.0,
+            value=config.USER_TINT,
+            step=1.0,
+            help=(
+                "How imperfect is this blackbody by biasing the colour along the "
+                "ISO temperature lines where >0.0 add Green and <0.0 add Magenta"
+            ),
+            key=str(widget_tint_slider),
+            on_change=widget_tint_slider,
+            disabled=config.USER_DAYLIGHT_MODE,
+            label_visibility="hidden",
+        )
 
 
 def body_display(result: ConversionResult):
