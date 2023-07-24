@@ -70,17 +70,6 @@ def body_header():
             on_change=widget_temperature_box,
         )
 
-        if not config.USER_DAYLIGHT_MODE:
-            streamlit.number_input(
-                label="Tint",
-                min_value=-150.0,
-                max_value=150.0,
-                value=config.USER_TINT,
-                step=1.0,
-                key=str(widget_tint_box),
-                on_change=widget_tint_box,
-            )
-
     with column2:
         streamlit.slider(
             label="",
@@ -92,7 +81,21 @@ def body_header():
             on_change=widget_temperature_slider,
         )
 
-        if not config.USER_DAYLIGHT_MODE:
+    if not config.USER_DAYLIGHT_MODE:
+        column1, column2 = streamlit.columns([0.25, 0.75])
+
+        with column1:
+            streamlit.number_input(
+                label="Tint",
+                min_value=-150.0,
+                max_value=150.0,
+                value=config.USER_TINT,
+                step=1.0,
+                key=str(widget_tint_box),
+                on_change=widget_tint_box,
+            )
+
+        with column2:
             streamlit.slider(
                 label="",
                 min_value=-150.0,
@@ -156,7 +159,7 @@ def body_display():
 
 
 def body_footer():
-    streamlit.subheader(":book: Learning")
+    streamlit.header(":book: Learning")
 
     streamlit.markdown(
         """
@@ -194,19 +197,19 @@ def body_footer():
     ]
     dataframe = pandas.DataFrame(table_data, columns=["Temperature", "Source"])
     streamlit.table(dataframe)
-    streamlit.subheader("References")
+    streamlit.header("References")
     streamlit.markdown(
         "- [1] https://en.wikipedia.org/wiki/Color_temperature\n"
         "- [2] http://web.archive.org/web/20080517201411\n"
         "- [3] http://www.npl.co.uk/blueskies/"
     )
 
-    streamlit.subheader("About")
+    streamlit.header("About")
 
     streamlit.caption(
         "version `0.1.0` "
         "-- last-updated: `TODO` "
-        "-- Made by [Liam Collod](https://mrlixm.github.io/)"
+        "-- Made by [Liam Collod](https://mrlixm.github.io/) "
         "using [colour-science](https://www.colour-science.org/) librairy."
     )
     streamlit.caption("Usage permitted for commercial purposes.")
