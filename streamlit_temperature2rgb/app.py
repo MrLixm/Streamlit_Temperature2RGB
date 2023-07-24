@@ -1,10 +1,7 @@
-import pandas
 import streamlit
+import pandas
 
 import streamlit_temperature2rgb.interface
-
-__version__ = "3.2"
-__date__ = "07-04-2021"
 
 streamlit.set_page_config(
     page_title="Temperature2RGB",
@@ -13,40 +10,29 @@ streamlit.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Sidebar
 
-streamlit.sidebar.header(":gear: Settings")
-user_result_mode = streamlit.sidebar.selectbox(
-    label="Locus",
-    options=["Planckian", "Daylight"],
-    index=0,
-    help="Planckian: pure incandescent black body \n"
-    "\nDaylight: same but viewed under daylight condition",
-)
+streamlit.title("Temperature to RGB color.".upper())
+
+with streamlit.sidebar:
+    streamlit.header("Settings".upper())
+    user_locus = streamlit.selectbox(
+        label="Locus",
+        options=["Planckian", "Daylight"],
+        index=0,
+        help=(
+            "- Planckian: pure incandescent black body\n"
+            "- Daylight: same but viewed under daylight condition"
+        ),
+    )
+
 
 # Build rest of the interface
 
-if user_result_mode == "Planckian":
+if user_locus == "Planckian":
     streamlit_temperature2rgb.interface.planckian.ui()
-elif user_result_mode == "Daylight":
+elif user_locus == "Daylight":
     streamlit_temperature2rgb.interface.daylight.ui()
 
-
-#  App footer
-"""
--------------------------------------------------------------------------------
-"""
-
-streamlit.markdown(
-    "_Usage permitted for commercial purposes._\n\n"
-    "_Made by [Liam Collod](https://www.artstation.com/monsieur_lixm) "
-    "using [colour-science](https://www.colour-science.org/) librairy._\n\n"
-    "_Contact: monsieurlixm@gmail.com_"
-)
-
-"""
----
-"""
 
 streamlit.subheader(":book: Learning")
 
@@ -77,7 +63,7 @@ table_data = [
     ("3000K", "Warm white compact fluorescent and LED lamps  "),
     (
         "5000K",
-        ("Horizon daylight, cool white / daylight compact fluorescent " "lamps (CFL)"),
+        "Horizon daylight, cool white/daylight compact fluorescent lamps (CFL)",
     ),
     ("5900K", "Sunlight above the atmosphere (Space)"),
     ("6500K", "Daylight, overcast"),
@@ -85,15 +71,23 @@ table_data = [
     ("10637K (Planckian)", "Bluest sky in the world.(Brazil)"),
     ("15,000-27,000K", "Clear blue poleward sky "),
 ]
-dataframe = pandas.DataFrame(table_data, columns=("Temperature", "Source"))
+dataframe = pandas.DataFrame(table_data, columns=["Temperature", "Source"])
 streamlit.table(dataframe)
-streamlit.write(
-    "Sources: \n"
-    "- https://en.wikipedia.org/wiki/Color_temperature\n"
-    "- http://web.archive.org/web/20080517201411"
-    "/http://www.npl.co.uk/blueskies/"
+streamlit.subheader("References")
+streamlit.markdown(
+    "- [1] https://en.wikipedia.org/wiki/Color_temperature\n"
+    "- [2] http://web.archive.org/web/20080517201411\n"
+    "- [3] http://www.npl.co.uk/blueskies/"
 )
-"""
----
-"""
-streamlit.markdown(f"_Version `{__version__}` , last updated: `{__date__}`_")
+
+
+streamlit.subheader("About")
+
+
+streamlit.caption(
+    "version `0.1.0` "
+    "-- last-updated: `TODO` "
+    "-- Made by [Liam Collod](https://mrlixm.github.io/)"
+    "using [colour-science](https://www.colour-science.org/) librairy."
+)
+streamlit.caption("Usage permitted for commercial purposes.")
