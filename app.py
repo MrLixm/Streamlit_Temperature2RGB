@@ -1,0 +1,3 @@
+import streamlit_temperature2rgb
+
+streamlit_temperature2rgb.create_main_interface()
