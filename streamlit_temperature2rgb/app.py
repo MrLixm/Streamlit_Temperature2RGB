@@ -1,7 +1,7 @@
 import pandas
 import streamlit
 
-import interface
+import streamlit_temperature2rgb.interface
 
 __version__ = "3.2"
 __date__ = "07-04-2021"
@@ -27,9 +27,9 @@ user_result_mode = streamlit.sidebar.selectbox(
 # Build rest of the interface
 
 if user_result_mode == "Planckian":
-    interface.planckian.ui()
+    streamlit_temperature2rgb.interface.planckian.ui()
 elif user_result_mode == "Daylight":
-    interface.daylight.ui()
+    streamlit_temperature2rgb.interface.daylight.ui()
 
 
 #  App footer

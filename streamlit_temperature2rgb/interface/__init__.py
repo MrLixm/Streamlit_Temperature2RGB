@@ -1,2 +1,2 @@
-from interface import daylight
-from interface import planckian
+from . import daylight
+from . import planckian

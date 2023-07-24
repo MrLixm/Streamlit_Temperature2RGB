@@ -1,8 +1,8 @@
 import numpy
 import streamlit
 
-import constants
-import core
+from streamlit_temperature2rgb import constants
+from streamlit_temperature2rgb import core
 
 
 def ui():
