@@ -1,3 +1,4 @@
+import colour.plotting.temperature
 import streamlit
 import pandas
 
@@ -150,15 +151,18 @@ def body_display(result: ConversionResult):
         )
         streamlit.caption("⬆ CIE xy chromaticity coordinates")
 
-    streamlit.code(
-        rgb_array_to_nuke(
-            result.get_rgb_array(),
-            config.USER_NDECIMALS,
-            node_name=result.get_nuke_node_name(),
-        ),
-        language="text",
-    )
-    streamlit.caption("⬆ Nuke node")
+    with streamlit.expander("As Nuke Node"):
+        streamlit.code(
+            rgb_array_to_nuke(
+                result.get_rgb_array(),
+                config.USER_NDECIMALS,
+                node_name=result.get_nuke_node_name(),
+            ),
+            language="text",
+        )
+
+    figure, axes = result.get_cct_plot()
+    streamlit.pyplot(figure)
 
 
 def body_footer():

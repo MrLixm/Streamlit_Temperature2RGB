@@ -4,6 +4,7 @@ from . import config
 from streamlit_temperature2rgb.core import PlanckianCCTConversion
 from streamlit_temperature2rgb.core import DaylightCCTConversion
 from streamlit_temperature2rgb.core import rgb_array_to_image
+from streamlit_temperature2rgb.core import plot_cct_conversion
 
 
 class ConversionResult:
@@ -39,14 +40,14 @@ class ConversionResult:
         _tint = tint / 3000
 
         if use_daylight:
-            _conversion = DaylightCCTConversion(
+            self._conversion = DaylightCCTConversion(
                 CCT=CCT,
                 colorspace=_colorspace,
                 illuminant=_whitepoint,
                 cat=cat.as_core(),
             )
         else:
-            _conversion = PlanckianCCTConversion(
+            self._conversion = PlanckianCCTConversion(
                 CCT=CCT,
                 colorspace=_colorspace,
                 illuminant=_whitepoint,
@@ -54,13 +55,16 @@ class ConversionResult:
                 tint=_tint,
             )
 
-        self._rgb_array = _conversion.rgb
+        self._rgb_array = self._conversion.rgb
         if normalize:
             self._rgb_array = colour.algebra.normalise_maximum(
                 self._rgb_array, clip=True
             )
 
-        self._xy_array = _conversion.xy
+        self._xy_array = self._conversion.xy
+
+    def get_cct_conversion(self):
+        return self._conversion
 
     def get_preview_image(self, width: int, height: int):
         conversion_preview = self.__class__(
@@ -94,6 +98,10 @@ class ConversionResult:
             nuke_node_name = f"Planckian_{self._user_CCT}K_{self._user_colorspace_name.as_label()}_{self._user_tint}"
 
         return nuke_node_name
+
+    def get_cct_plot(self):
+        figure, axes = plot_cct_conversion(cct_conversion=self._conversion)
+        return figure, axes
 
     @classmethod
     def from_active_context(cls):

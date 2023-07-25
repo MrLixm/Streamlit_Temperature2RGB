@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "streamlit-temperature2RGB"
-version = "0.1.0"
+name = "Streamlit_Temperature2RGB"
+version = "0.2.0"
 description = ""
 authors = ["Liam Collod <lcollod@gmail.com>"]
 readme = "README.md"
@@ -9,7 +9,8 @@ packages = [{ include = "streamlit_temperature2rgb" }]
 [tool.poetry.dependencies]
 python = ">3.9.7,<3.12"
 streamlit = "^1.25"
-colour-science = "^0.4"
+colour-science = { version = "^0.4", extras = ["plotting"] }
+matplotlib = "*"
 
 [tool.poetry.dev-dependencies]
 black = "*"
