@@ -1,4 +1,6 @@
 import enum
+from typing import Sequence
+from typing import Union
 
 
 class NamedFunction:
@@ -63,3 +65,36 @@ class UifiedEnum(enum.Enum):
     @classmethod
     def labels(cls):
         return [item.as_label() for item in cls]
+
+
+def python_to_markdown_table(
+    python_table: Union[tuple[Union[tuple, list]], list[Union[tuple, list]]],
+    headers: list[str],
+) -> str:
+    """
+    Convert a table stored as a python object (list of list usually), to a markdown formatted table.
+    """
+    table_colum_len = [
+        max(column)
+        for column in [[len(item) for item in column] for column in zip(*python_table)]
+    ]
+
+    markdown_table = ""
+
+    for column_index, column_length in enumerate(table_colum_len):
+        markdown_table += "|" + headers[column_index].ljust(column_length, " ")
+
+    markdown_table += "|\n"
+
+    for column_length in table_colum_len:
+        markdown_table += "|" + "-" * column_length
+
+    markdown_table += "|\n"
+
+    for row in python_table:
+        for column_index, column_length in enumerate(table_colum_len):
+            markdown_table += "|" + row[column_index].ljust(column_length, " ")
+
+        markdown_table += "|\n"
+
+    return markdown_table

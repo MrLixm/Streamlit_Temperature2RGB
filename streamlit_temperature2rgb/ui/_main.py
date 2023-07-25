@@ -1,8 +1,8 @@
 import streamlit
-import pandas
 
 import streamlit_temperature2rgb
 from streamlit_temperature2rgb._utils import widgetify
+from streamlit_temperature2rgb._utils import python_to_markdown_table
 from streamlit_temperature2rgb.core import rgb_array_to_tuple
 from streamlit_temperature2rgb.core import rgb_array_to_nuke
 from streamlit_temperature2rgb.core import rgb_array_to_single_line
@@ -175,8 +175,8 @@ def body_footer():
 
     streamlit.markdown(
         """
-    [Planckian Locus](https://en.wikipedia.org/wiki/Planckian_locus): path of the
-    color of the light emitted by a pure incandescent black-body.
+    **Planckian Locus**: path of the
+    color of the light emitted by a pure incandescent black-body. --[3]
 
     **Daylight Locus**:  path of the color of the light emitted by a pure 
     incandescent black-body under Daylight viewing conditions. 
@@ -204,15 +204,19 @@ def body_footer():
         ("5900K", "Sunlight above the atmosphere (Space)"),
         ("6500K", "Daylight, overcast"),
         ("6500-9500K", "LCD or CRT screen "),
-        ("10637K (Planckian)", "Bluest sky in the world.(Brazil) [2]"),
+        ("10637K (Planckian)", "Bluest sky in the world.(Brazil) --[2]"),
         ("15,000-27,000K", "Clear blue poleward sky "),
     ]
-    dataframe = pandas.DataFrame(table_data, columns=["Temperature", "Source"])
-    streamlit.table(dataframe)
+
+    streamlit.markdown(
+        python_to_markdown_table(table_data, ["Temperature", "Description"])
+    )
+    streamlit.caption("-- [1]")
     streamlit.header("References")
     streamlit.markdown(
         "- [1] https://en.wikipedia.org/wiki/Color_temperature\n"
         "- [2] http://web.archive.org/web/20160728054241/http://www.npl.co.uk/content/ConWebDoc/1053\n"
+        "- [3] https://en.wikipedia.org/wiki/Planckian_locus"
     )
 
     streamlit.header("About")
