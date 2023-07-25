@@ -204,7 +204,7 @@ def body_footer():
         ("5900K", "Sunlight above the atmosphere (Space)"),
         ("6500K", "Daylight, overcast"),
         ("6500-9500K", "LCD or CRT screen "),
-        ("10637K (Planckian)", "Bluest sky in the world.(Brazil)"),
+        ("10637K (Planckian)", "Bluest sky in the world.(Brazil) [2]"),
         ("15,000-27,000K", "Clear blue poleward sky "),
     ]
     dataframe = pandas.DataFrame(table_data, columns=["Temperature", "Source"])
@@ -212,19 +212,21 @@ def body_footer():
     streamlit.header("References")
     streamlit.markdown(
         "- [1] https://en.wikipedia.org/wiki/Color_temperature\n"
-        "- [2] http://web.archive.org/web/20080517201411\n"
-        "- [3] http://www.npl.co.uk/blueskies/"
+        "- [2] http://web.archive.org/web/20160728054241/http://www.npl.co.uk/content/ConWebDoc/1053\n"
     )
 
     streamlit.header("About")
 
     streamlit.caption(
-        f"version `{streamlit_temperature2rgb.__version__}` "
-        f"-- last-updated: `{streamlit_temperature2rgb.__last_updated__}` "
-        "-- Made by [Liam Collod](https://mrlixm.github.io/) "
-        "using [colour-science](https://www.colour-science.org/) librairy."
+        "![GitHub last commit (branch)](https://img.shields.io/github/last-commit/MrLixm/Streamlit_Temperature2RGB/main?label=last%20updated) "
+        f"![Static Badge](https://img.shields.io/badge/version-{streamlit_temperature2rgb.__version__}-lightgrey) "
+        f"![GitHub Repo stars](https://img.shields.io/github/stars/MrLixm/Streamlit_Temperature2RGB?logo=github)"
     )
-    streamlit.caption("Usage permitted for commercial purposes.")
+    streamlit.caption(
+        "Made by [Liam Collod](https://mrlixm.github.io/) "
+        "using [colour-science](https://www.colour-science.org/) librairy --"
+        "Usage permitted for commercial purposes."
+    )
 
 
 def create_main_interface():
