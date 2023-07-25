@@ -3,7 +3,7 @@ import streamlit
 import pandas
 
 from streamlit_temperature2rgb._utils import widgetify
-from streamlit_temperature2rgb.core import rgb_array_to_multi_line
+from streamlit_temperature2rgb.core import rgb_array_to_tuple
 from streamlit_temperature2rgb.core import rgb_array_to_nuke
 from streamlit_temperature2rgb.core import rgb_array_to_single_line
 from streamlit_temperature2rgb.core import xy_array_to_tuple
@@ -51,20 +51,20 @@ def body_header():
 
     value = config.USER_TEMPERATURE
     if config.USER_DAYLIGHT_MODE:
-        min_value = 1000.0
-        max_value = 25000.0
+        min_value = 1667.0
+        max_value = 10000.0
         value = max(min_value, config.USER_TEMPERATURE)
     else:
-        min_value = 10.0
-        max_value = 50000.0
+        min_value = 798.0  # Draper point
+        max_value = 10000.0
 
-    column1, column2 = streamlit.columns([0.25, 0.75])
+    column1, column2, column3, column4 = streamlit.columns([0.25, 0.3, 0.2, 0.25])
 
     with column1:
         streamlit.number_input(
-            label="Temperature in Kelvin (K)",
+            label="Temperature (K)",
             min_value=min_value,
-            max_value=max_value,
+            max_value=max_value * 2,
             value=value,
             step=10.0,
             key=str(widget_temperature_box),
@@ -83,9 +83,7 @@ def body_header():
             label_visibility="hidden",
         )
 
-    column1, column2 = streamlit.columns([0.25, 0.75])
-
-    with column1:
+    with column3:
         streamlit.number_input(
             label="Tint",
             min_value=-150.0,
@@ -97,7 +95,7 @@ def body_header():
             disabled=config.USER_DAYLIGHT_MODE,
         )
 
-    with column2:
+    with column4:
         streamlit.slider(
             label="Tint Slider",
             min_value=-150.0,
@@ -116,6 +114,8 @@ def body_header():
 
 
 def body_display(result: ConversionResult):
+    streamlit.subheader("Result")
+
     if (
         config.USER_TEMPERATURE < 1900
         and config.USER_COLORSPACE_NAME == config.USER_COLORSPACE_NAME.sRGB
@@ -125,26 +125,28 @@ def body_display(result: ConversionResult):
             "colorspace being 1900K, the result you are seeing is clamped."
         )
 
-    column1, column2 = streamlit.columns(2)
+    streamlit.image(
+        image=result.get_preview_image(1000, 190),
+        caption="",  # "sRGB preview with 2.2 power function",
+        clamp=True,
+    )
+    column1, column2, column3 = streamlit.columns(3)
 
     with column1:
-        streamlit.image(
-            image=result.get_preview_image(400, 285),
-            caption="sRGB preview with 2.2 power function",
-            clamp=True,
-        )
-
-    with column2:
         streamlit.code(
-            rgb_array_to_multi_line(result.get_rgb_array(), config.USER_NDECIMALS),
+            rgb_array_to_tuple(result.get_rgb_array(), config.USER_NDECIMALS),
             language="text",
         )
+        streamlit.caption("⬆ RGB tuple style")
 
+    with column2:
         streamlit.code(
             rgb_array_to_single_line(result.get_rgb_array(), config.USER_NDECIMALS),
             language="text",
         )
+        streamlit.caption("⬆ RGBA Katana style")
 
+    with column3:
         streamlit.code(
             xy_array_to_tuple(result.get_xy_array(), config.USER_NDECIMALS),
             language="text",

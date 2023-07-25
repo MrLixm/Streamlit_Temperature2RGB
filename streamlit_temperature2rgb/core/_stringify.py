@@ -8,11 +8,11 @@ def rgb_array_to_single_line(array: numpy.ndarray, ndecimals: int) -> str:
     return f"{r} {g} {b} 1.0"
 
 
-def rgb_array_to_multi_line(array: numpy.ndarray, ndecimals: int) -> str:
+def rgb_array_to_tuple(array: numpy.ndarray, ndecimals: int) -> str:
     r = round(float(array[0]), ndecimals)
     g = round(float(array[1]), ndecimals)
     b = round(float(array[2]), ndecimals)
-    return f"R: {r} \n" f"G: {g} \n" f"B: {b} \n"
+    return f"({r}, {g}, {b})"
 
 
 def rgb_array_to_nuke(array: numpy.ndarray, ndecimals: int, node_name: str) -> str:
