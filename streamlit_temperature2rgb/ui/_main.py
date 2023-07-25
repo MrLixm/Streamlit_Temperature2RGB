@@ -7,53 +7,53 @@ from streamlit_temperature2rgb.core import rgb_array_to_tuple
 from streamlit_temperature2rgb.core import rgb_array_to_nuke
 from streamlit_temperature2rgb.core import rgb_array_to_single_line
 from streamlit_temperature2rgb.core import xy_array_to_tuple
-from . import config
+from streamlit_temperature2rgb.ui import config
 from ._sidebar import create_sidebar
 from ._controller import ConversionResult
 
 
 @widgetify
 def widget_temperature_slider(key):
-    config.USER_TEMPERATURE = streamlit.session_state[key]
+    config().USER_TEMPERATURE = streamlit.session_state[key]
 
 
 @widgetify
 def widget_temperature_box(key):
-    config.USER_TEMPERATURE = streamlit.session_state[key]
+    config().USER_TEMPERATURE = streamlit.session_state[key]
 
 
 @widgetify
 def widget_colorspace_name(key):
     value = streamlit.session_state[key]
     print("widget_colorspace_name", value)
-    config.USER_COLORSPACE_NAME = config.USER_COLORSPACE_NAME.from_label(value)
+    config().USER_COLORSPACE_NAME = config().USER_COLORSPACE_NAME.from_label(value)
 
 
 @widgetify
 def widget_tint_slider(key):
-    config.USER_TINT = streamlit.session_state[key]
+    config().USER_TINT = streamlit.session_state[key]
 
 
 @widgetify
 def widget_tint_box(key):
-    config.USER_TINT = streamlit.session_state[key]
+    config().USER_TINT = streamlit.session_state[key]
 
 
 def body_header():
-    options = config.USER_COLORSPACE_NAME.labels()
+    options = config().USER_COLORSPACE_NAME.labels()
     streamlit.selectbox(
         label="Target Colorspace Primaries",
         options=options,
-        index=options.index(config.USER_COLORSPACE_NAME.as_label()),
+        index=options.index(config().USER_COLORSPACE_NAME.as_label()),
         key=str(widget_colorspace_name),
         on_change=widget_colorspace_name,
     )
 
-    value = config.USER_TEMPERATURE
-    if config.USER_DAYLIGHT_MODE:
+    value = config().USER_TEMPERATURE
+    if config().USER_DAYLIGHT_MODE:
         min_value = 1667.0
         max_value = 10000.0
-        value = max(min_value, config.USER_TEMPERATURE)
+        value = max(min_value, config().USER_TEMPERATURE)
     else:
         min_value = 798.0  # Draper point
         max_value = 10000.0
@@ -88,11 +88,11 @@ def body_header():
             label="Tint",
             min_value=-150.0,
             max_value=150.0,
-            value=config.USER_TINT,
+            value=config().USER_TINT,
             step=1.0,
             key=str(widget_tint_box),
             on_change=widget_tint_box,
-            disabled=config.USER_DAYLIGHT_MODE,
+            disabled=config().USER_DAYLIGHT_MODE,
         )
 
     with column4:
@@ -100,7 +100,7 @@ def body_header():
             label="Tint Slider",
             min_value=-150.0,
             max_value=150.0,
-            value=config.USER_TINT,
+            value=config().USER_TINT,
             step=1.0,
             help=(
                 "How imperfect is this blackbody by biasing the colour along the "
@@ -108,7 +108,7 @@ def body_header():
             ),
             key=str(widget_tint_slider),
             on_change=widget_tint_slider,
-            disabled=config.USER_DAYLIGHT_MODE,
+            disabled=config().USER_DAYLIGHT_MODE,
             label_visibility="hidden",
         )
 
@@ -117,8 +117,8 @@ def body_display(result: ConversionResult):
     streamlit.subheader("Result")
 
     if (
-        config.USER_TEMPERATURE < 1900
-        and config.USER_COLORSPACE_NAME == config.USER_COLORSPACE_NAME.sRGB
+        config().USER_TEMPERATURE < 1900
+        and config().USER_COLORSPACE_NAME == config().USER_COLORSPACE_NAME.sRGB
     ):
         streamlit.warning(
             "The lowest representable color temperature by the sRGB "
@@ -135,21 +135,21 @@ def body_display(result: ConversionResult):
 
     with column1:
         streamlit.code(
-            rgb_array_to_tuple(result.get_rgb_array(), config.USER_NDECIMALS),
+            rgb_array_to_tuple(result.get_rgb_array(), config().USER_NDECIMALS),
             language="text",
         )
         streamlit.caption("⬆ RGB tuple style")
 
     with column2:
         streamlit.code(
-            rgb_array_to_single_line(result.get_rgb_array(), config.USER_NDECIMALS),
+            rgb_array_to_single_line(result.get_rgb_array(), config().USER_NDECIMALS),
             language="text",
         )
         streamlit.caption("⬆ RGBA Katana style")
 
     with column3:
         streamlit.code(
-            xy_array_to_tuple(result.get_xy_array(), config.USER_NDECIMALS),
+            xy_array_to_tuple(result.get_xy_array(), config().USER_NDECIMALS),
             language="text",
         )
         streamlit.caption("⬆ CIE xy chromaticity coordinates")
@@ -158,7 +158,7 @@ def body_display(result: ConversionResult):
         streamlit.code(
             rgb_array_to_nuke(
                 result.get_rgb_array(),
-                config.USER_NDECIMALS,
+                config().USER_NDECIMALS,
                 node_name=result.get_nuke_node_name(),
                 node_label=result.get_nuke_node_label(),
             ),

@@ -124,11 +124,11 @@ class ConversionResult:
     @classmethod
     def from_active_context(cls):
         return cls(
-            config.USER_TEMPERATURE,
-            config.USER_COLORSPACE_NAME,
-            config.USER_ILLUMINANT_NAME,
-            config.USER_CAT_NAME,
-            config.USER_TINT,
-            config.USER_DAYLIGHT_MODE,
-            config.USER_NORMALIZE,
+            config().USER_TEMPERATURE,
+            config().USER_COLORSPACE_NAME,
+            config().USER_ILLUMINANT_NAME,
+            config().USER_CAT_NAME,
+            config().USER_TINT,
+            config().USER_DAYLIGHT_MODE,
+            config().USER_NORMALIZE,
         )
