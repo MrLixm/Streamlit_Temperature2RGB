@@ -1,12 +1,12 @@
 # streamlit_temperature2rgb
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://share.streamlit.io/mrlixm/streamlit_temperature2rgb/main/src/app.py)
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://mrlixm-temperature2rgb.streamlit.app)
 
 Convert Kelvin temperatures to RGB color with specified colorspace.
  
 ![screenshot of the web-app](./doc/img/main-screenshot.png)
 
-https://share.streamlit.io/mrlixm/streamlit_temperature2rgb/main/src/app.py
+Legacy link : https://share.streamlit.io/mrlixm/streamlit_temperature2rgb/main/src/app.py
 
 All features:
 
