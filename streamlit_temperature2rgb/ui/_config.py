@@ -52,67 +52,67 @@ class UserConfig:
             streamlit.session_state["USER_COLORSPACE_NAME"] = Colorspaces.sRGB
 
     @property
-    def USER_TEMPERATURE(self):
+    def USER_TEMPERATURE(self) -> float:
         return streamlit.session_state["USER_TEMPERATURE"]
 
     @USER_TEMPERATURE.setter
-    def USER_TEMPERATURE(self, new_value):
+    def USER_TEMPERATURE(self, new_value: float):
         streamlit.session_state["USER_TEMPERATURE"] = new_value
 
     @property
-    def USER_DAYLIGHT_MODE(self):
+    def USER_DAYLIGHT_MODE(self) -> bool:
         return streamlit.session_state["USER_DAYLIGHT_MODE"]
 
     @USER_DAYLIGHT_MODE.setter
-    def USER_DAYLIGHT_MODE(self, new_value):
+    def USER_DAYLIGHT_MODE(self, new_value: bool):
         streamlit.session_state["USER_DAYLIGHT_MODE"] = new_value
 
     @property
-    def USER_TINT(self):
+    def USER_TINT(self) -> float:
         return streamlit.session_state["USER_TINT"]
 
     @USER_TINT.setter
-    def USER_TINT(self, new_value):
+    def USER_TINT(self, new_value: float):
         streamlit.session_state["USER_TINT"] = new_value
 
     @property
-    def USER_ILLUMINANT_NAME(self):
+    def USER_ILLUMINANT_NAME(self) -> Illuminants:
         return streamlit.session_state["USER_ILLUMINANT_NAME"]
 
     @USER_ILLUMINANT_NAME.setter
-    def USER_ILLUMINANT_NAME(self, new_value):
+    def USER_ILLUMINANT_NAME(self, new_value: Illuminants):
         streamlit.session_state["USER_ILLUMINANT_NAME"] = new_value
 
     @property
-    def USER_NDECIMALS(self):
+    def USER_NDECIMALS(self) -> int:
         return streamlit.session_state["USER_NDECIMALS"]
 
     @USER_NDECIMALS.setter
-    def USER_NDECIMALS(self, new_value):
+    def USER_NDECIMALS(self, new_value: int):
         streamlit.session_state["USER_NDECIMALS"] = new_value
 
     @property
-    def USER_NORMALIZE(self):
+    def USER_NORMALIZE(self) -> bool:
         return streamlit.session_state["USER_NORMALIZE"]
 
     @USER_NORMALIZE.setter
-    def USER_NORMALIZE(self, new_value):
+    def USER_NORMALIZE(self, new_value: bool):
         streamlit.session_state["USER_NORMALIZE"] = new_value
 
     @property
-    def USER_CAT_NAME(self):
+    def USER_CAT_NAME(self) -> ChromaticAdaptationTransforms:
         return streamlit.session_state["USER_CAT_NAME"]
 
     @USER_CAT_NAME.setter
-    def USER_CAT_NAME(self, new_value):
+    def USER_CAT_NAME(self, new_value: ChromaticAdaptationTransforms):
         streamlit.session_state["USER_CAT_NAME"] = new_value
 
     @property
-    def USER_COLORSPACE_NAME(self):
+    def USER_COLORSPACE_NAME(self) -> Colorspaces:
         return streamlit.session_state["USER_COLORSPACE_NAME"]
 
     @USER_COLORSPACE_NAME.setter
-    def USER_COLORSPACE_NAME(self, new_value):
+    def USER_COLORSPACE_NAME(self, new_value: Colorspaces):
         streamlit.session_state["USER_COLORSPACE_NAME"] = new_value
 
 
