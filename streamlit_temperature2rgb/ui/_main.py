@@ -125,6 +125,7 @@ def body_display(result: ConversionResult):
             "colorspace being 1900K, the result you are seeing is clamped."
         )
 
+    streamlit.caption("sRGB preview with 2.2 power function")
     streamlit.image(
         image=result.get_preview_image(1000, 190),
         caption="",  # "sRGB preview with 2.2 power function",
