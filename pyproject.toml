@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "Streamlit_Temperature2RGB"
-version = "1.0.0"
+version = "1.0.1"
 description = "Convert Kelvin temperatures to RGB color in a web-app"
 authors = ["Liam Collod <lcollod@gmail.com>"]
 readme = "README.md"
