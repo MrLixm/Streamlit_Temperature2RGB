@@ -1,7 +1,7 @@
-import colour.plotting.temperature
 import streamlit
 import pandas
 
+import streamlit_temperature2rgb
 from streamlit_temperature2rgb._utils import widgetify
 from streamlit_temperature2rgb.core import rgb_array_to_tuple
 from streamlit_temperature2rgb.core import rgb_array_to_nuke
@@ -218,8 +218,8 @@ def body_footer():
     streamlit.header("About")
 
     streamlit.caption(
-        "version `0.1.0` "
-        "-- last-updated: `TODO` "
+        f"version `{streamlit_temperature2rgb.__version__}` "
+        f"-- last-updated: `{streamlit_temperature2rgb.__last_updated__}` "
         "-- Made by [Liam Collod](https://mrlixm.github.io/) "
         "using [colour-science](https://www.colour-science.org/) librairy."
     )
