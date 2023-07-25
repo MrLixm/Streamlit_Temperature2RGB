@@ -159,6 +159,7 @@ def body_display(result: ConversionResult):
                 result.get_rgb_array(),
                 config.USER_NDECIMALS,
                 node_name=result.get_nuke_node_name(),
+                node_label=result.get_nuke_node_label(),
             ),
             language="text",
         )

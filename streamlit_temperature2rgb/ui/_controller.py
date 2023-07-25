@@ -91,11 +91,29 @@ class ConversionResult:
 
     def get_nuke_node_name(self):
         if self._user_use_daylight:
-            nuke_node_name = (
-                f"Daylight_{self._user_CCT}K_{self._user_colorspace_name.as_label()}"
-            )
+            mode = "Daylight"
         else:
-            nuke_node_name = f"Planckian_{self._user_CCT}K_{self._user_colorspace_name.as_label()}_{self._user_tint}"
+            mode = "Planckian"
+
+        nuke_node_name = "CCT"
+        nuke_node_name += f"_{mode[0]}"
+        nuke_node_name += f"_{self._user_CCT}".replace(".", "d")
+        nuke_node_name += f"__{self._user_colorspace_name.as_core()}".replace(" ", "_")
+
+        return nuke_node_name
+
+    def get_nuke_node_label(self):
+        if self._user_use_daylight:
+            mode = "Daylight"
+        else:
+            mode = "Planckian"
+
+        nuke_node_name = "CCT"
+        nuke_node_name += f" {self._user_CCT}"
+        nuke_node_name += f" {self._user_colorspace_name.as_core()}"
+        nuke_node_name += f" ({mode})"
+        if not self._user_use_daylight:
+            nuke_node_name += f":tint={self._user_tint}"
 
         return nuke_node_name
 
