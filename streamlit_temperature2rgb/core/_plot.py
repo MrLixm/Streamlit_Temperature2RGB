@@ -69,7 +69,8 @@ def plot_cct_conversion(cct_conversion: BaseCCTConversion):
     figure: matplotlib.pyplot.Figure
     axes: matplotlib.pyplot.Axes
     array = numpy.full((2, 2, 3), cct_conversion.rgb)
-
+    zoom = 0.6
+    offset = (0.1, 0.1)
     (
         figure,
         axes,
@@ -88,6 +89,13 @@ def plot_cct_conversion(cct_conversion: BaseCCTConversion):
         show_diagram_colours=False,
         transparent_background=False,
         standalone=False,
+        # initial bb = (-0.1, 0.7, -0.2, 0.6)
+        bounding_box=(
+            -0.1 * zoom + offset[0],
+            0.7 * zoom + offset[0],
+            -0.2 * zoom + offset[1],
+            0.6 * zoom + offset[1],
+        ),
     )
     colour.plotting.temperature.plot_planckian_locus(
         "#5A534C", axes=axes, method="CIE 1960 UCS"
