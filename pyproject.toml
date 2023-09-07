@@ -9,7 +9,7 @@ packages = [{ include = "streamlit_temperature2rgb" }]
 [tool.poetry.dependencies]
 python = ">3.9.7,<3.12"
 streamlit = "^1.25"
-colour-science = { version = "^0.4", extras = ["plotting"] }
+colour-science = { version = "0.4.2", extras = ["plotting"] }
 matplotlib = "*"
 
 [tool.poetry.dev-dependencies]
