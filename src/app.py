@@ -1,5 +1,13 @@
+import sys
+from pathlib import Path
+
 import colour.utilities
 import streamlit
+
+THIS_DIR = Path(__file__).parent
+if str(THIS_DIR) not in sys.path:
+    sys.path.append(str(THIS_DIR))
+
 import streamlit_temperature2rgb
 
 streamlit.set_page_config(
