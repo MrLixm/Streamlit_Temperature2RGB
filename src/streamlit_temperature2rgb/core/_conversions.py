@@ -34,9 +34,8 @@ class BaseCCTConversion:
     def rgb(self):
         return colour.XYZ_to_RGB(
             self.XYZ,
-            self.illuminant,
-            self.colorspace.whitepoint,
-            self.colorspace.matrix_XYZ_to_RGB,
+            colourspace=self.colorspace,
+            illuminant=self.illuminant,
             chromatic_adaptation_transform=self.cat,
         )
 
