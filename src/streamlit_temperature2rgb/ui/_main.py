@@ -243,12 +243,12 @@ def body_footer():
 
     streamlit.caption(
         "![GitHub last commit (branch)](https://img.shields.io/github/last-commit/MrLixm/Streamlit_Temperature2RGB/main?label=last%20updated) "
-        f"![Static Badge](https://img.shields.io/badge/version-{streamlit_temperature2rgb.__version__}-lightgrey) "
-        f"[![GitHub Repo stars](https://img.shields.io/github/stars/MrLixm/Streamlit_Temperature2RGB?logo=github)](https://github.com/MrLixm/Streamlit_Temperature2RGB)"
+        "![GitHub last tag](https://img.shields.io/github/v/tag/MrLixm/Streamlit_Temperature2RGB?filter=v*&label=version) "
+        "[![GitHub Repo stars](https://img.shields.io/github/stars/MrLixm/Streamlit_Temperature2RGB?logo=github)](https://github.com/MrLixm/Streamlit_Temperature2RGB)"
     )
     streamlit.caption(
-        "Made by [Liam Collod](https://mrlixm.github.io/) "
-        "using [colour-science](https://www.colour-science.org/) librairy --"
+        "Made by [Liam Collod](https://liamcollod.xyz/) "
+        "using [colour-science](https://www.colour-science.org/) librairy -- "
         "Usage permitted for commercial purposes."
     )
 
