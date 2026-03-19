@@ -1,5 +1,4 @@
 import enum
-from typing import Sequence
 from typing import Union
 
 
@@ -37,7 +36,8 @@ def widgetify(func):
     _key = func.__name__
 
     def inner(*args, **kwargs):
-        return func(key=_key)
+        kwargs.update({"key": _key})
+        return func(**kwargs)
 
     return NamedFunction(inner, _key)
 

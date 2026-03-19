@@ -13,70 +13,90 @@ from ._controller import ConversionResult
 
 
 @widgetify
-def widget_temperature_slider(key):
+def widget_temperature_slider(key, force_update=False):
+    if key not in streamlit.session_state or force_update:
+        streamlit.session_state[key] = config().USER_TEMPERATURE
+        return
+
     config().USER_TEMPERATURE = streamlit.session_state[key]
 
 
 @widgetify
-def widget_temperature_box(key):
+def widget_temperature_box(key, force_update=False):
+    if key not in streamlit.session_state or force_update:
+        streamlit.session_state[key] = config().USER_TEMPERATURE
+        return
+
     config().USER_TEMPERATURE = streamlit.session_state[key]
 
 
 @widgetify
-def widget_colorspace_name(key):
+def widget_colorspace_name(key, force_update=False):
+    if key not in streamlit.session_state or force_update:
+        streamlit.session_state[key] = config().USER_COLORSPACE_NAME.as_label()
+        return
+
     value = streamlit.session_state[key]
-    print("widget_colorspace_name", value)
     config().USER_COLORSPACE_NAME = config().USER_COLORSPACE_NAME.from_label(value)
 
 
 @widgetify
-def widget_tint_slider(key):
+def widget_tint_slider(key, force_update=False):
+    if key not in streamlit.session_state or force_update:
+        streamlit.session_state[key] = config().USER_TINT
+        return
+
     config().USER_TINT = streamlit.session_state[key]
 
 
 @widgetify
-def widget_tint_box(key):
+def widget_tint_box(key, force_update=False):
+    if key not in streamlit.session_state or force_update:
+        streamlit.session_state[key] = config().USER_TINT
+        return
+
     config().USER_TINT = streamlit.session_state[key]
 
 
 def body_header():
     options = config().USER_COLORSPACE_NAME.labels()
+    widget_colorspace_name(force_update=True)
     streamlit.selectbox(
         label="Target Colorspace Primaries",
         options=options,
-        index=options.index(config().USER_COLORSPACE_NAME.as_label()),
         key=str(widget_colorspace_name),
         on_change=widget_colorspace_name,
     )
 
-    value = config().USER_TEMPERATURE
     if config().USER_DAYLIGHT_MODE:
         min_value = 1667.0
         max_value = 10000.0
-        value = max(min_value, config().USER_TEMPERATURE)
     else:
         min_value = 798.0  # Draper point
         max_value = 10000.0
 
+    config().USER_TEMPERATURE = max(min_value, config().USER_TEMPERATURE)
+    config().USER_TEMPERATURE = min(max_value, config().USER_TEMPERATURE)
+
     column1, column2, column3, column4 = streamlit.columns([0.25, 0.3, 0.2, 0.25])
 
     with column1:
+        widget_temperature_box(force_update=True)
         streamlit.number_input(
             label="Temperature (K)",
             min_value=min_value,
             max_value=max_value * 2,
-            value=value,
             step=10.0,
             key=str(widget_temperature_box),
             on_change=widget_temperature_box,
         )
 
     with column2:
+        widget_temperature_slider(force_update=True)
         streamlit.slider(
             label="Temperature Slider",
             min_value=min_value,
             max_value=max_value,
-            value=value,
             step=10.0,
             key=str(widget_temperature_slider),
             on_change=widget_temperature_slider,
@@ -84,11 +104,11 @@ def body_header():
         )
 
     with column3:
+        widget_tint_box(force_update=True)
         streamlit.number_input(
             label="Tint",
             min_value=-150.0,
             max_value=150.0,
-            value=config().USER_TINT,
             step=1.0,
             key=str(widget_tint_box),
             on_change=widget_tint_box,
@@ -96,11 +116,11 @@ def body_header():
         )
 
     with column4:
+        widget_tint_slider(force_update=True)
         streamlit.slider(
             label="Tint Slider",
             min_value=-150.0,
             max_value=150.0,
-            value=config().USER_TINT,
             step=1.0,
             help=(
                 "How imperfect is this blackbody by biasing the colour along the "
