@@ -1,6 +1,6 @@
 [project]
 name = "Streamlit_Temperature2RGB"
-version = "1.1.1"
+version = "2.0.0"
 description = "Convert Kelvin temperatures to RGB color in a web-app"
 authors = ["Liam Collod <monsieurlixm@gmail.com>"]
 readme = "README.md"
