@@ -1,20 +1,18 @@
-[tool.poetry]
+[project]
 name = "Streamlit_Temperature2RGB"
 version = "1.1.1"
 description = "Convert Kelvin temperatures to RGB color in a web-app"
-authors = ["Liam Collod <lcollod@gmail.com>"]
+authors = ["Liam Collod <monsieurlixm@gmail.com>"]
 readme = "README.md"
 packages = [{ include = "streamlit_temperature2rgb" }]
+requires-python = ">=3.11"
+dependencies = [
+    "colour-science>=0.4.7",
+    "matplotlib>=3.10.8",
+    "streamlit>=1.55.0",
+]
 
-[tool.poetry.dependencies]
-python = ">3.9.7,<3.12"
-streamlit = "^1.25"
-colour-science = { version = "^0.4", extras = ["plotting"] }
-matplotlib = "*"
-
-[tool.poetry.dev-dependencies]
-black = "*"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "black>=26.3.1",
+]
