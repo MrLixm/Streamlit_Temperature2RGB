@@ -18,4 +18,6 @@ streamlit.set_page_config(
 )
 
 colour.utilities.filter_warnings(colour_usage_warnings=True, python_warnings=True)
+# we create a first instance of the config at startup
+streamlit_temperature2rgb.ui.config(force_instance=True)
 streamlit_temperature2rgb.create_main_interface()

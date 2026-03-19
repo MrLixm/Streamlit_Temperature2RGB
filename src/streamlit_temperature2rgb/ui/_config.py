@@ -116,8 +116,13 @@ class UserConfig:
         streamlit.session_state["USER_COLORSPACE_NAME"] = new_value
 
 
-def config() -> UserConfig:
+def config(force_instance: bool = False) -> UserConfig:
     """
     Return a user configuration instance.
+
+    Args:
+        force_instance: True to force the recreation of a config instance.
     """
-    return UserConfig()
+    if "__USER_CONFIG" not in streamlit.session_state or force_instance:
+        streamlit.session_state["__USER_CONFIG"] = UserConfig()
+    return streamlit.session_state["__USER_CONFIG"]
