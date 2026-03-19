@@ -16,15 +16,9 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 
-# PyCharm
+# IDE
 .idea/
+.vscode/
 
-# Poetry
-poetry.lock
-
-# log files
-*.log
-
-# personal stuff
-_uses/
-_outputs/
+# package management
+.venv/
